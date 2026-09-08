@@ -11,11 +11,15 @@ export const couple = {
   // First names only — these render in the large gold script.
   groom: {
     name: 'Himanshu',
-    parents: 'Son of Mr. & Mrs. Surname',            // ← replace
+    parents: 'Son of Mr. Jitendra Singh & Mrs. Sanil Yadav',
   },
   bride: {
     name: 'Shraddha',
-    parents: 'Daughter of Mr. & Mrs. Surname',       // ← replace
+    // Her father has passed away and his name wasn't known when this was
+    // written, so the line names her mother only rather than inventing one.
+    // To honour him once you have it, the usual wording is:
+    //   'Daughter of the late Mr. <name> & Mrs. Shila Singh'
+    parents: 'Daughter of Mrs. Shila Singh',
   },
 
   // Initials pressed into the envelope's wax seal.

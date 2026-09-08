@@ -12,18 +12,23 @@ npm run dev      # http://localhost:5173
 ## 1. Still to fill in
 
 **All invitation text lives in one file: [`src/data/wedding.js`](src/data/wedding.js).**
-Nothing is hard-coded in the components. Four placeholders are still in there,
+Nothing is hard-coded in the components. Two placeholders are still in there,
 left deliberately obvious so they can't ship unnoticed:
 
 | In `src/data/wedding.js` | Currently | Replace with |
 |---|---|---|
-| `couple.groom.parents` | `Son of Mr. & Mrs. Surname` | Himanshu's parents' names |
-| `couple.bride.parents` | `Daughter of Mr. & Mrs. Surname` | Shraddha's parents' names |
 | `closing.rsvpName` | `Your Name` | who guests should RSVP to |
 | `closing.rsvpPhone` | `''` (empty) | optional phone — becomes a tap-to-call link |
 
-Everything else — names, both dates, both venues, the Bareilly map pin, times,
-dress codes, the hashtag — is already set from what you sent.
+Everything else — names, both sets of parents, both dates, both venues, the
+Bareilly map pin, times, dress codes, the hashtag — is already set from what
+you sent.
+
+**On Shraddha's parents:** the line reads *"Daughter of Mrs. Shila Singh"*,
+naming her mother only, because her father has passed away and his name wasn't
+known. If you'd like to honour him, the customary wording is
+`'Daughter of the late Mr. <name> & Mrs. Shila Singh'`. There's a note to this
+effect in `wedding.js` too.
 
 If you clear `closing.rsvpPhone` or `closing.rsvpName`, that block simply
 doesn't render. Same for `couple.hashtag`.

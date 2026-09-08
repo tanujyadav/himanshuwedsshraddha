@@ -7,8 +7,20 @@ import { EASE, fadeUp, scaleIn, inView } from '../animations'
 import { useCountdown } from '../hooks/useCountdown'
 import { weddingDate } from '../data/wedding'
 
-/* Live countdown over the wide chandelier frame — that photograph has a lot
-   of empty warm space, which is exactly what overlaid type needs. */
+/* Live countdown over the wide chandelier frame.
+
+   The type is split in two on purpose — heading high up on the dark wooden
+   beam, digits down on the empty floor — so neither lands on the couple, who
+   sit in the middle third.
+
+   Why not just move the photo instead: this frame is taller than a phone
+   viewport is narrow, so `cover` crops it horizontally only. There is no
+   objectPosition that shifts the couple vertically out of the way, which is
+   why the layout has to work around them.
+
+   The heading offset is in `svh`, not `%` — percentage padding resolves
+   against the container's WIDTH, so a percentage here would drift wildly
+   between phone sizes. */
 export default function CountdownSlide() {
   const { days, hours, minutes, seconds, done } = useCountdown(weddingDate)
 
@@ -16,20 +28,20 @@ export default function CountdownSlide() {
     <section
       style={{
         position: 'relative',
-        minHeight: '92svh',
         display: 'flex',
-        alignItems: 'center',
         overflow: 'hidden',
       }}
     >
       <Photo name="countdown" alt="" objectPosition="50% 45%" />
+
+      {/* Deepest where the two blocks of type sit; lightest across the couple. */}
       <div
         aria-hidden="true"
         style={{
           position: 'absolute',
           inset: 0,
           background:
-            'linear-gradient(180deg, rgba(36,7,16,0.7) 0%, rgba(36,7,16,0.4) 38%, rgba(36,7,16,0.76) 100%)',
+            'linear-gradient(180deg, rgba(36,7,16,0.5) 0%, rgba(36,7,16,0.22) 18%, rgba(36,7,16,0.52) 36%, rgba(36,7,16,0.3) 58%, rgba(36,7,16,0.62) 80%, rgba(36,7,16,0.92) 100%)',
         }}
       />
 
@@ -38,61 +50,72 @@ export default function CountdownSlide() {
           position: 'relative',
           zIndex: 2,
           width: '100%',
-          padding: '54px 22px',
+          // Floored in px so a landscape phone (where this frame crops
+          // vertically instead) can't squeeze the two type blocks together.
+          minHeight: 'max(96svh, 620px)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '0 22px 42px',
           textAlign: 'center',
         }}
       >
-        <Reveal>
-          <div className="label" style={{ color: 'var(--gold-light)' }}>
-            {done ? 'The day is here' : 'Counting down to'}
+        {/* ---- Heading, up on the beam above the couple ---- */}
+        <div style={{ paddingTop: 'max(25svh, 130px)', textShadow: '0 2px 16px rgba(36,7,16,0.6)' }}>
+          <Reveal>
+            <div className="label" style={{ color: 'var(--gold-light)' }}>
+              {done ? 'The day is here' : 'Counting down to'}
+            </div>
+          </Reveal>
+
+          <SplitText
+            tag="div"
+            text={done ? 'Today' : 'Forever'}
+            by="letter"
+            stagger={0.06}
+            className="script shimmer-light"
+            style={{ fontSize: 48, margin: '8px 0 4px' }}
+          />
+
+          <div style={{ marginTop: 14 }}>
+            <Ornament width={118} color="var(--gold-light)" />
           </div>
-        </Reveal>
-
-        <SplitText
-          tag="div"
-          text={done ? 'Today' : 'Forever'}
-          by="letter"
-          stagger={0.06}
-          className="script shimmer-light"
-          style={{ fontSize: 52, margin: '10px 0 6px' }}
-        />
-
-        <div style={{ margin: '18px 0 30px' }}>
-          <Ornament width={120} color="var(--gold-light)" />
         </div>
 
-        <motion.div
-          variants={scaleIn}
-          initial="hidden"
-          whileInView="visible"
-          viewport={inView}
-          className="frost"
-          style={{ display: 'flex', alignItems: 'center', padding: '20px 6px' }}
-        >
-          <Unit value={days} label="Days" />
-          <Divider />
-          <Unit value={hours} label="Hours" />
-          <Divider />
-          <Unit value={minutes} label="Minutes" />
-          <Divider />
-          <Unit value={seconds} label="Seconds" />
-        </motion.div>
-
-        <Reveal variants={fadeUp} delay={0.2}>
-          <p
-            className="body-text"
-            style={{
-              color: 'rgba(253,248,240,0.82)',
-              fontSize: 14,
-              marginTop: 26,
-              fontStyle: 'italic',
-            }}
+        {/* ---- Digits, down on the empty floor below the couple ---- */}
+        <div>
+          <motion.div
+            variants={scaleIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={inView}
+            className="frost"
+            style={{ display: 'flex', alignItems: 'center', padding: '18px 6px' }}
           >
-            {done
-              ? 'The celebration begins today.'
-              : 'until two families become one'}
-          </p>
-        </Reveal>
+            <Unit value={days} label="Days" />
+            <Divider />
+            <Unit value={hours} label="Hours" />
+            <Divider />
+            <Unit value={minutes} label="Minutes" />
+            <Divider />
+            <Unit value={seconds} label="Seconds" />
+          </motion.div>
+
+          <Reveal variants={fadeUp} delay={0.2}>
+            <p
+              className="body-text"
+              style={{
+                color: 'rgba(253,248,240,0.85)',
+                fontSize: 14,
+                margin: '20px 0 0',
+                fontStyle: 'italic',
+                textShadow: '0 2px 12px rgba(36,7,16,0.6)',
+              }}
+            >
+              {done ? 'The celebration begins today.' : 'until two families become one'}
+            </p>
+          </Reveal>
+        </div>
       </div>
     </section>
   )
