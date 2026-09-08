@@ -119,6 +119,10 @@ expendable, and the container then matches it exactly:
 # gallery-hands: a wide band from the middle of a portrait frame
 ./tools-crop.ps1 -Src ORIGINAL.JPG -Out public/img/gallery-hands.jpg `
   -X0 0.0 -X1 1.0 -Y0 0.18 -Y1 0.62 -OutWidth 1300 -Quality 80
+
+# closing: landscape frame, couple at x 47-78% -> drop the empty left stairs
+./tools-crop.ps1 -Src ORIGINAL.JPG -Out public/img/closing.jpg `
+  -X0 0.40 -X1 0.86 -Y0 0.0 -Y1 1.0 -OutWidth 1150 -Quality 82
 ```
 
 `X0/X1/Y0/Y1` are the crop window as fractions of the original. From a
@@ -149,7 +153,27 @@ hard-coded slots: the first entry is the large lead frame, the next two sit
 side by side, and any entry flagged `wide: true` renders as a full-width
 landscape band.
 
-## 5. How it's put together
+## 5. Mobile
+
+Checked in real headless Chrome with touch emulation at 360x640, 390x844,
+412x915 and 430x932: no horizontal scroll, no tap target under 44px, no
+console errors, and both names above the fold on all four.
+
+Two mobile-specific details worth knowing if you edit layout:
+
+- **The hero arch is height-capped** (`min(50svh, 470px)`) inside a flex row,
+  so on a short phone it shrinks instead of pushing the names below the fold.
+  Because `aspectRatio` still holds, shrinking never crops the photo.
+- **Percentage padding resolves against WIDTH, not height.** The countdown's
+  heading offset is in `svh` for exactly this reason - a percentage there
+  drifted wildly between phone sizes. Watch for this if you nudge any vertical
+  offset.
+
+Tall full-bleed sections use `svh`, not `vh`, so mobile browser chrome doesn't
+cause a jump, and they are floored in px (`max(96svh, 620px)`) so a landscape
+phone can't squeeze two blocks of type together.
+
+## 6. How it's put together
 
 ```
 src/
@@ -181,7 +205,7 @@ Per-word/letter animation uses transform and opacity only — deliberately no
 `blur()` filter, which drops frames badly on mid-range Android when it runs
 across dozens of spans at once.
 
-## 6. Saving your work
+## 7. Saving your work
 
 ```bash
 git add . && git commit -m "save"   # before every round of changes

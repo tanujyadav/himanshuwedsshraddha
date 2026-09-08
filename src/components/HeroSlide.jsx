@@ -42,6 +42,11 @@ export default function HeroSlide() {
           <Crest />
         </div>
 
+        {/* Flex row so the arch can size from its height: on a short phone the
+            height cap wins and the arch simply gets smaller, keeping the names
+            above the fold. It never crops — aspectRatio holds, so the frame
+            shrinks rather than being clipped. */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
         <motion.div
           initial={{ opacity: 0, y: 26, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -49,6 +54,8 @@ export default function HeroSlide() {
           style={{
             position: 'relative',
             aspectRatio: '25 / 32',
+            height: 'min(50svh, 470px)',
+            maxWidth: '100%',
             // Dome top, barely-rounded base — the mandap arch.
             borderRadius: '48% 48% 6px 6px / 31% 31% 1% 1%',
             overflow: 'hidden',
@@ -60,6 +67,7 @@ export default function HeroSlide() {
         >
           <Photo name="hero" alt="" priority kenburns objectPosition="50% 50%" />
         </motion.div>
+        </div>
       </div>
 
       {/* ---- Wording ---- */}
