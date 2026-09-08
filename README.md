@@ -87,9 +87,25 @@ originals down to about 1000×1500 at ~150 KB each. All eight together are
 | `gallery-1/2/3.jpg` | photo strip |
 | `closing.jpg` | closing screen |
 
-**If you swap a photo,** re-crop its focal point too. `objectFit: cover` on a
-narrow phone crops hard, and the default centre crop cuts faces off in several
-of these frames. The focal points are the `objectPosition` values in
+**`hero.jpg` is a different shape on purpose** — 1000x2000 (1:2), not 2:3
+like the others. The phone column is roughly 430x975, an aspect near **0.44**,
+so `cover` on a 2:3 photo crops horizontally only and renders its *full
+height*. On that frame the top 43% is empty ceiling, and no `objectPosition`
+can remove it — the crop has to happen in the file. `tools-crop.ps1` is the
+script that did it:
+
+```powershell
+./tools-crop.ps1 -Src ~/Downloads/PHOTO.JPG -Out public/img/hero.jpg `
+  -X0 0.2175 -X1 0.7425 -Y0 0.30 -Y1 1.0 -OutWidth 1000 -Quality 80
+```
+
+`X0/X1/Y0/Y1` are the crop window as fractions of the original. Aim for an
+aspect near 0.45-0.50 for any full-bleed photo, with faces around 20-35% of
+the frame height so the names panel clears them.
+
+**If you swap any other photo,** re-check its focal point. `objectFit: cover`
+on a narrow phone crops hard, and the default centre crop cuts faces off in
+several of these frames. The focal points are the `objectPosition` values in
 `HeroSlide.jsx`, `CountdownSlide.jsx`, `FinalSlide.jsx`, and the `FOCAL` maps
 at the top of `EventSlide.jsx` and `GallerySlide.jsx`.
 

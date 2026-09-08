@@ -6,9 +6,13 @@ import { couple, weddingDate, invitation } from '../data/wedding'
 
 /* Opening screen: full-bleed portrait, names in gold foil on a frosted panel.
 
-   objectPosition is tuned to this specific photograph — the couple sit right
-   of centre, so a plain "center" crop cuts the bride's face off on a narrow
-   phone. Retune it if you swap the image. */
+   public/img/hero.jpg is deliberately pre-cropped to a tall 1:2 portrait
+   rather than the 2:3 the camera shot. The phone column is ~430x975, an
+   aspect near 0.44, so `cover` on the original crops horizontally only and
+   renders the photo's FULL height — which on that frame is 43% empty ceiling
+   above their heads. No objectPosition can fix that; the crop has to happen
+   in the file. Faces now land around 20-35% of the frame, well clear of the
+   names panel. Re-crop to a similar aspect if you swap the photo. */
 export default function HeroSlide() {
   const d = new Date(weddingDate)
   const dateLine = `${String(d.getDate()).padStart(2, '0')} . ${String(
@@ -17,7 +21,7 @@ export default function HeroSlide() {
 
   return (
     <section style={{ position: 'relative', height: '100svh', minHeight: 560, overflow: 'hidden' }}>
-      <Photo name="hero" alt="" priority kenburns objectPosition="58% 38%" />
+      <Photo name="hero" alt="" priority kenburns objectPosition="50% 25%" />
 
       {/* legibility scrims: light at the top for the label, deep at the base */}
       <div
@@ -55,7 +59,7 @@ export default function HeroSlide() {
         </motion.div>
 
         {/* faces sit in this gap — keep it breathing */}
-        <div style={{ flex: 1, minHeight: 150 }} />
+        <div style={{ flex: 1, minHeight: 120 }} />
 
         {/* ---- BOTTOM ---- */}
         <div style={{ padding: '0 12px 26px' }}>
@@ -72,7 +76,7 @@ export default function HeroSlide() {
               animate="visible"
               transition={{ delay: 0.95 }}
               className="script shimmer-light"
-              style={{ fontSize: 46, lineHeight: 1.06 }}
+              style={{ fontSize: 42, lineHeight: 1.06 }}
             >
               {couple.groom.name}
             </motion.div>
@@ -95,7 +99,7 @@ export default function HeroSlide() {
               animate="visible"
               transition={{ delay: 1.15 }}
               className="script shimmer-light"
-              style={{ fontSize: 46, lineHeight: 1.06 }}
+              style={{ fontSize: 42, lineHeight: 1.06 }}
             >
               {couple.bride.name}
             </motion.div>
