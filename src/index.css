@@ -82,7 +82,13 @@ button { font-family: inherit; }
   color: var(--gold-deep);
 }
 
-.script { font-family: var(--script); font-weight: 400; line-height: 1.05; }
+/* line-height must stay generous. Great Vibes has tall flourishes and deep
+   descenders, and .shimmer paints its gradient only INSIDE the element's box
+   (background-clip: text) while -webkit-text-fill-color makes the glyph itself
+   transparent. So any part of a letter that escapes a tight line box gets no
+   gradient painted and simply disappears — names looked cut off at 1.05.
+   Don't override this below ~1.35 on a shimmer element. */
+.script { font-family: var(--script); font-weight: 400; line-height: 1.38; }
 
 .serif-caps {
   font-family: var(--serif);

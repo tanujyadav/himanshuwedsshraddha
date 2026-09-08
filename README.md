@@ -24,12 +24,6 @@ Everything else — names, both sets of parents, both dates, both venues, the
 Bareilly map pin, times, the hashtag — is already set from what
 you sent.
 
-**On Shraddha's parents:** the line reads *"Daughter of Mrs. Shila Singh"*,
-naming her mother only, because her father has passed away and his name wasn't
-known. If you'd like to honour him, the customary wording is
-`'Daughter of the late Mr. <name> & Mrs. Shila Singh'`. There's a note to this
-effect in `wedding.js` too.
-
 If you clear `closing.rsvpPhone` or `closing.rsvpName`, that block simply
 doesn't render. Same for `couple.hashtag`.
 

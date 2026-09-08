@@ -43,8 +43,10 @@ export default function SplitText({
             style={{
               display: 'inline-block',
               // Descenders (g, y, p) would be shaved off by the mask otherwise.
+              // The negative margin cancels the padding, so this buys the
+              // descenders room without changing layout.
               ...(masked
-                ? { overflow: 'hidden', paddingBottom: '0.14em', marginBottom: '-0.14em' }
+                ? { overflow: 'hidden', paddingBottom: '0.24em', marginBottom: '-0.24em' }
                 : {}),
             }}
           >

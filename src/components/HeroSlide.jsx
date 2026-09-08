@@ -95,7 +95,7 @@ export default function HeroSlide() {
             <div className="label">{invitation.eyebrow}</div>
           </motion.div>
 
-          <div style={{ margin: '15px 0 20px' }}>
+          <div style={{ margin: '13px 0 10px' }}>
             <Ornament width={104} delay={0.5} />
           </div>
 
@@ -105,7 +105,7 @@ export default function HeroSlide() {
             animate="visible"
             transition={{ delay: 0.65 }}
             className="script shimmer"
-            style={{ fontSize: 50, lineHeight: 1.02 }}
+            style={{ fontSize: 50 }}
           >
             {couple.groom.name}
           </motion.div>
@@ -118,12 +118,12 @@ export default function HeroSlide() {
             animate="visible"
             transition={{ delay: 0.85 }}
             className="script shimmer"
-            style={{ fontSize: 50, lineHeight: 1.02 }}
+            style={{ fontSize: 50 }}
           >
             {couple.bride.name}
           </motion.div>
 
-          <div style={{ margin: '22px 0 18px' }}>
+          <div style={{ margin: '14px 0 16px' }}>
             <Ornament width={132} delay={1} />
           </div>
 

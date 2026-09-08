@@ -58,20 +58,25 @@ export default function FinalSlide() {
           <Ornament width={120} color="var(--gold-light)" />
         </div>
 
+        {/* Letter mode, not word: word mode wraps each word in an overflow
+            mask, and Great Vibes descenders hang far enough below the baseline
+            to be shaved off by it. */}
         <SplitText
           tag="div"
           text={closing.line1}
-          by="word"
+          by="letter"
+          stagger={0.03}
           className="script shimmer-light"
-          style={{ fontSize: 42, lineHeight: 1.15 }}
+          style={{ fontSize: 42 }}
         />
         <SplitText
           tag="div"
           text={closing.line2}
-          by="word"
-          delay={0.3}
+          by="letter"
+          stagger={0.03}
+          delay={0.4}
           className="script shimmer-light"
-          style={{ fontSize: 42, lineHeight: 1.15 }}
+          style={{ fontSize: 42 }}
         />
 
         <motion.div

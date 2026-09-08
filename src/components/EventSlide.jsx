@@ -86,12 +86,12 @@ export default function EventSlide({ event, index = 0 }) {
           whileInView="visible"
           viewport={inView}
           className="script"
-          style={{ fontSize: 47, lineHeight: 1.05, color: event.headingColor, marginTop: 12 }}
+          style={{ fontSize: 47, color: event.headingColor, marginTop: 8 }}
         >
           {event.heading}
         </motion.div>
 
-        <div style={{ margin: '18px 0 22px' }}>
+        <div style={{ margin: '12px 0 20px' }}>
           <Ornament width={110} color={event.headingColor} />
         </div>
 

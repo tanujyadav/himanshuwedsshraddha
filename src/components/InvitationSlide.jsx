@@ -40,7 +40,7 @@ export default function InvitationSlide() {
         whileInView="visible"
         viewport={inView}
         className="script shimmer"
-        style={{ fontSize: 52, lineHeight: 1.05 }}
+        style={{ fontSize: 52 }}
       >
         {couple.groom.name}
       </motion.div>
@@ -57,7 +57,7 @@ export default function InvitationSlide() {
       <Reveal variants={fadeUp} delay={0.1}>
         <div
           className="script"
-          style={{ fontSize: 30, color: 'var(--gold)', margin: '14px 0 10px' }}
+          style={{ fontSize: 30, color: 'var(--gold)', margin: '4px 0 0' }}
         >
           and
         </div>
@@ -70,7 +70,7 @@ export default function InvitationSlide() {
         whileInView="visible"
         viewport={inView}
         className="script shimmer"
-        style={{ fontSize: 52, lineHeight: 1.05 }}
+        style={{ fontSize: 52 }}
       >
         {couple.bride.name}
       </motion.div>

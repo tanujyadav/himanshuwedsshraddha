@@ -82,7 +82,7 @@ export default function EnvelopeIntro({ onComplete }) {
         <div className="label" style={{ color: 'var(--gold-light)', opacity: 0.75 }}>
           The Wedding Of
         </div>
-        <div className="script shimmer" style={{ fontSize: 34, marginTop: 10, lineHeight: 1.1 }}>
+        <div className="script shimmer" style={{ fontSize: 34, marginTop: 6 }}>
           {couple.groom.name} &amp; {couple.bride.name}
         </div>
       </motion.div>

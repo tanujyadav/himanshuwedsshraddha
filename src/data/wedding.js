@@ -15,11 +15,9 @@ export const couple = {
   },
   bride: {
     name: 'Shraddha',
-    // Her father has passed away and his name wasn't known when this was
-    // written, so the line names her mother only rather than inventing one.
-    // To honour him once you have it, the usual wording is:
-    //   'Daughter of the late Mr. <name> & Mrs. Shila Singh'
-    parents: 'Daughter of Mrs. Shila Singh',
+    // "Late" honours her father, who has passed away. Phrased to match the
+    // groom's line above.
+    parents: 'Daughter of Late Mr. I.K. Bishen & Mrs. Shila Bishen',
   },
 
   // Initials pressed into the envelope's wax seal.
