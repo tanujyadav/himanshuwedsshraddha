@@ -6,10 +6,14 @@ import SplitText from './SplitText'
 import { fadeUp, scaleIn, stagger, inView } from '../animations'
 import { gallery } from '../data/wedding'
 
+/* Portrait frames are 2/3 — the same aspect as the files — so `cover` has
+   nothing to crop and no one gets clipped. These focal points therefore do
+   almost nothing today; they only matter if a frame ratio changes or a
+   replacement photo has a different aspect. */
 const FOCAL = {
-  'gallery-lead': '50% 34%',
-  'gallery-bride': '50% 38%',
-  'gallery-groom': '50% 44%',
+  'gallery-lead': '50% 50%',
+  'gallery-bride': '50% 45%',
+  'gallery-groom': '50% 48%',
   'gallery-hands': '50% 50%',
 }
 
@@ -43,7 +47,7 @@ export default function GallerySlide() {
       </div>
 
       <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={inView}>
-        {lead ? <Frame item={lead} ratio="3 / 4" /> : null}
+        {lead ? <Frame item={lead} ratio="2 / 3" /> : null}
 
         {pair.length ? (
           <div
@@ -55,7 +59,7 @@ export default function GallerySlide() {
             }}
           >
             {pair.map((item) => (
-              <Frame key={item.key} item={item} ratio="3 / 4" />
+              <Frame key={item.key} item={item} ratio="2 / 3" />
             ))}
           </div>
         ) : null}

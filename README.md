@@ -85,7 +85,7 @@ sit at positions 1200-1385 and 1557-1679). Each is resized from a ~12 MB
 | `countdown.jpg` | 1635 | countdown background |
 | `wedding.jpg` | 1266 | The Wedding |
 | `reception.jpg` | 1591 | The Reception |
-| `gallery-lead.jpg` | 1300 | photo strip - "Together" |
+| `gallery-lead.jpg` | 1353 | photo strip - "Together" |
 | `gallery-bride.jpg` | 917 | photo strip - "The Bride" |
 | `gallery-groom.jpg` | 815 | photo strip - "The Groom" |
 | `gallery-hands.jpg` | 1620 | photo strip - "The Details" (wide band) |
@@ -133,6 +133,13 @@ Note that `hero.jpg` is the exception with no dark overlay or text on it at
 all; the wording sits below the arch on ivory. Same for the event slides. An
 overlay panel always landed on the couple, so the type moved off the photos
 entirely.
+
+### The gallery frames crop nothing
+
+Portrait gallery frames are `2 / 3` and the wide band is `3 / 2`, matching the
+files, so `cover` has nothing to trim there either. `gallery-lead.jpg` is a
+full uncropped frame on purpose - it is a wide garden scene where the couple
+are deliberately small, and cropping in would lose the composition.
 
 ### Swapping a photo
 
