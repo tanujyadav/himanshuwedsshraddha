@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2b0812" />
+
+    <title>Himanshu &amp; Shraddha — 26 November 2026</title>
+    <meta
+      name="description"
+      content="Together with our families, we joyfully invite you to celebrate the wedding of Himanshu and Shraddha. Deoria, Uttar Pradesh — 26 November 2026."
+    />
+
+    <!-- Speeds up the first paint: these two are visible before any scrolling. -->
+    <link rel="preload" as="image" href="/img/hero.jpg" fetchpriority="high" />
+    <link rel="preload" as="image" href="/img/countdown.jpg" />
+
+    <!-- Cuts a round trip off the Google Fonts request. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- WhatsApp / iMessage link preview.
+         IMPORTANT: og:image and og:url must be ABSOLUTE urls or WhatsApp shows
+         no picture. After your first `vercel --prod`, replace both
+         https://your-app.vercel.app values below with the real domain and
+         deploy once more. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Himanshu &amp; Shraddha — Wedding Invitation" />
+    <meta
+      property="og:description"
+      content="26 November 2026 · Deoria, Uttar Pradesh. Tap to open your invitation."
+    />
+    <meta property="og:image" content="https://your-app.vercel.app/img/hero.jpg" />
+    <meta property="og:url" content="https://your-app.vercel.app" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

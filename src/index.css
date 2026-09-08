@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap');
+
+:root {
+  /* ---- Royal palette: deep maroon + antique gold on ivory ---- */
+  --royal:       #4a0f20;
+  --royal-deep:  #2b0812;
+  --royal-soft:  #6b1e38;
+  --gold:        #c9942a;
+  --gold-deep:   #8b6210;
+  --gold-light:  #f2ddab;
+  --gold-bright: #ffeec2;
+  --cream:       #fdf8f0;
+  --cream-warm:  #f7ece0;
+  --text-dark:   #2b0812;
+  --text-medium: #5c2438;
+  --text-soft:   #8a5a68;
+
+  --serif:  'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  --script: 'Great Vibes', 'Cormorant Garamond', cursive;
+  --sans:   'Jost', system-ui, -apple-system, sans-serif;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  /* Velvet ground — the ivory invitation appears to rest on it. */
+  background: var(--royal-deep);
+  color: var(--text-dark);
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  /* Cormorant Garamond ships oldstyle figures by default, which renders "17"
+     as "I7" and "11" as "II" — unreadable for dates and a countdown. Force
+     lining figures everywhere. */
+  font-variant-numeric: lining-nums;
+  font-feature-settings: 'lnum' 1;
+}
+
+/* Mobile-first card column. On desktop it reads as a deliberate invitation
+   card floating on velvet rather than a stretched page. */
+#root {
+  max-width: 430px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  background: var(--cream);
+  position: relative;
+  min-height: 100svh;
+}
+
+@media (min-width: 500px) {
+  #root { box-shadow: 0 0 100px rgba(0, 0, 0, 0.55); }
+}
+
+/* Paper grain — above the background, below the content. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+img { max-width: 100%; display: block; }
+
+button { font-family: inherit; }
+
+/* ---- Type scale ---- */
+.label {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.script { font-family: var(--script); font-weight: 400; line-height: 1.05; }
+
+.serif-caps {
+  font-family: var(--serif);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+}
+
+.body-text {
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--text-medium);
+  font-weight: 300;
+}
+
+/* ---- Gold foil shimmer, used on the couple's names ---- */
+.shimmer {
+  background: linear-gradient(
+    100deg,
+    var(--gold-deep) 0%, var(--gold) 25%, var(--gold-bright) 45%,
+    var(--gold) 65%, var(--gold-deep) 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: sweep 7s var(--ease) infinite;
+}
+
+@keyframes sweep {
+  0%,  100% { background-position: 160% 50%; }
+  50%       { background-position: -60% 50%; }
+}
+
+/* Slow Ken Burns drift on full-bleed photography */
+@keyframes kenburns {
+  0%   { transform: scale(1.06) translate3d(0, 0, 0); }
+  100% { transform: scale(1.18) translate3d(0, -1.4%, 0); }
+}
+.kenburns { animation: kenburns 22s ease-out both; }
+
+::selection { background: var(--gold-light); color: var(--text-dark); }
+
+/* Respect the OS setting — everything settles into its final state. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .shimmer { animation: none; background-position: 50% 50%; }
+  .kenburns { animation: none; transform: scale(1.06); }
+}
+
+/* Gold foil tuned for dark grounds — the standard .shimmer bottoms out at
+   #8b6210, which reads as muddy brown over a dark photo overlay. */
+.shimmer-light {
+  background: linear-gradient(
+    100deg,
+    var(--gold) 0%, var(--gold-light) 22%, #fffaee 45%,
+    var(--gold-light) 68%, var(--gold) 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: sweep 7s var(--ease) infinite;
+}
+
+/* Frosted panel used over full-bleed photography. */
+.frost {
+  background: rgba(43, 8, 18, 0.34);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid rgba(242, 221, 171, 0.26);
+  border-radius: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-light { animation: none; background-position: 50% 50%; }
+}
