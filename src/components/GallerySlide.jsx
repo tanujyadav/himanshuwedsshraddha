@@ -7,16 +7,23 @@ import { fadeUp, scaleIn, stagger, inView } from '../animations'
 import { gallery } from '../data/wedding'
 
 const FOCAL = {
-  'gallery-1': '50% 38%',
-  'gallery-2': '50% 50%',
-  'gallery-3': '50% 44%',
+  'gallery-lead': '50% 34%',
+  'gallery-bride': '50% 38%',
+  'gallery-groom': '50% 44%',
+  'gallery-hands': '50% 50%',
 }
 
-/* A short photo interlude between the ceremonies and the closing note.
-   One full-width frame, then two half-width frames — enough variety to feel
-   composed rather than a uniform grid. */
+/* A photo interlude between the ceremonies and the closing note.
+
+   Layout comes from the data, not from hard-coded slots: the first entry is
+   the large lead frame, the next two portraits sit side by side, and anything
+   flagged `wide` becomes a full-width landscape band. Enough variety that it
+   reads as composed rather than a uniform grid. */
 export default function GallerySlide() {
-  const [lead, ...rest] = gallery
+  const portraits = gallery.filter((g) => !g.wide)
+  const [lead, ...restPortraits] = portraits
+  const pair = restPortraits.slice(0, 2)
+  const bands = gallery.filter((g) => g.wide)
 
   return (
     <section style={{ background: 'var(--cream-warm)', padding: '62px 20px 66px' }}>
@@ -35,26 +42,29 @@ export default function GallerySlide() {
         <Ornament width={110} />
       </div>
 
-      <motion.div
-        variants={stagger}
-        initial="hidden"
-        whileInView="visible"
-        viewport={inView}
-      >
+      <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={inView}>
         {lead ? <Frame item={lead} ratio="3 / 4" /> : null}
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 12,
-            marginTop: 12,
-          }}
-        >
-          {rest.map((item) => (
-            <Frame key={item.key} item={item} ratio="3 / 4" />
-          ))}
-        </div>
+        {pair.length ? (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 12,
+              marginTop: 12,
+            }}
+          >
+            {pair.map((item) => (
+              <Frame key={item.key} item={item} ratio="3 / 4" />
+            ))}
+          </div>
+        ) : null}
+
+        {bands.map((item) => (
+          <div key={item.key} style={{ marginTop: 12 }}>
+            <Frame item={item} ratio="3 / 2" />
+          </div>
+        ))}
       </motion.div>
     </section>
   )

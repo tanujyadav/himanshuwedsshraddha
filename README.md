@@ -74,44 +74,67 @@ won't show.
 
 ## 4. Photos
 
-Eight photos, picked from the ten in the shoot and resized from the ~12 MB
-originals down to about 1000×1500 at ~150 KB each. All eight together are
-~1.3 MB, which matters because most guests will open this on mobile data.
+Nine photos, chosen from the 1,680-image FotoOwl gallery (the couple sessions
+sit at positions 1200-1385 and 1557-1679). Each is resized from a ~12 MB
+4672x7008 original down to ~1000px wide, ~200 KB. All nine together are about
+1.6 MB, which matters because most guests will open this on mobile data.
 
-| File in `public/img/` | Where it appears |
-|---|---|
-| `hero.jpg` | opening screen |
-| `countdown.jpg` | countdown background |
-| `wedding.jpg` | The Wedding |
-| `sangeet.jpg` | The Reception |
-| `gallery-1/2/3.jpg` | photo strip |
-| `closing.jpg` | closing screen |
+| File in `public/img/` | Gallery position | Where it appears |
+|---|---|---|
+| `hero.jpg` | 1346 | opening screen |
+| `countdown.jpg` | 1635 | countdown background |
+| `wedding.jpg` | 1266 | The Wedding |
+| `reception.jpg` | 1607 | The Reception |
+| `gallery-lead.jpg` | 1300 | photo strip - "Together" |
+| `gallery-bride.jpg` | 917 | photo strip - "The Bride" |
+| `gallery-groom.jpg` | 815 | photo strip - "The Groom" |
+| `gallery-hands.jpg` | 1620 | photo strip - "The Details" (wide band) |
+| `closing.jpg` | 1662 | closing screen |
 
-**`hero.jpg` is a different shape on purpose** — 1000x2000 (1:2), not 2:3
-like the others. The phone column is roughly 430x975, an aspect near **0.44**,
-so `cover` on a 2:3 photo crops horizontally only and renders its *full
-height*. On that frame the top 43% is empty ceiling, and no `objectPosition`
-can remove it — the crop has to happen in the file. `tools-crop.ps1` is the
-script that did it:
+### Two of them are cropped, not just resized
+
+**`hero.jpg` is 1000x2000 (1:2)**, not 2:3 like the rest. The phone column is
+roughly 430x975, an aspect near **0.44**. When a container is *narrower* than
+the image, `cover` crops horizontally only and renders the image's **full
+height** - so a 2:3 photo shows all its empty sky or ceiling, and no
+`objectPosition` can remove it. The crop has to happen in the file.
+
+At a 1:2 aspect the widest possible crop of a 4672x7008 original uses **75% of
+the width and the full height** - that is the zoom floor, and going narrower
+than that only crops in tighter. `tools-crop.ps1` does it:
 
 ```powershell
-./tools-crop.ps1 -Src ~/Downloads/PHOTO.JPG -Out public/img/hero.jpg `
-  -X0 0.2175 -X1 0.7425 -Y0 0.30 -Y1 1.0 -OutWidth 1000 -Quality 80
+# hero: the widest 1:2 crop possible, centred on the couple
+./tools-crop.ps1 -Src ORIGINAL.JPG -Out public/img/hero.jpg `
+  -X0 0.175 -X1 0.925 -Y0 0.0 -Y1 1.0 -OutWidth 1000 -Quality 80
+
+# gallery-hands: a wide band from the middle of a portrait frame
+./tools-crop.ps1 -Src ORIGINAL.JPG -Out public/img/gallery-hands.jpg `
+  -X0 0.0 -X1 1.0 -Y0 0.18 -Y1 0.62 -OutWidth 1300 -Quality 80
 ```
 
-`X0/X1/Y0/Y1` are the crop window as fractions of the original. Aim for an
-aspect near 0.45-0.50 for any full-bleed photo, with faces around 20-35% of
-the frame height so the names panel clears them.
+`X0/X1/Y0/Y1` are the crop window as fractions of the original. For a
+full-bleed photo aim for an aspect near 0.45-0.50, with faces at roughly
+20-45% of the frame height so the names panel clears them.
 
-**If you swap any other photo,** re-check its focal point. `objectFit: cover`
-on a narrow phone crops hard, and the default centre crop cuts faces off in
-several of these frames. The focal points are the `objectPosition` values in
-`HeroSlide.jsx`, `CountdownSlide.jsx`, `FinalSlide.jsx`, and the `FOCAL` maps
-at the top of `EventSlide.jsx` and `GallerySlide.jsx`.
+### Swapping a photo
 
-The blur-up placeholders in `src/data/lqip.js` are generated from the photos —
-regenerate them if you replace images, or just delete the entry and that photo
-will fade in from transparent instead.
+Re-check its focal point. `objectFit: cover` on a narrow phone crops hard and
+the default centre crop cuts faces off in several of these frames. Focal points
+live in the `objectPosition` values in `HeroSlide.jsx`, `CountdownSlide.jsx`
+and `FinalSlide.jsx`, and in the `FOCAL` maps at the top of `EventSlide.jsx`
+and `GallerySlide.jsx`.
+
+Then regenerate that photo's blur-up placeholder in `src/data/lqip.js` - it is
+a 20px inline JPEG per image. Deleting an entry is safe: that photo just fades
+in from transparent instead.
+
+### Adding or reordering gallery photos
+
+The strip's layout comes from the `gallery` array in `wedding.js`, not from
+hard-coded slots: the first entry is the large lead frame, the next two sit
+side by side, and any entry flagged `wide: true` renders as a full-width
+landscape band.
 
 ## 5. How it's put together
 

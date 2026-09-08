@@ -9,8 +9,8 @@ import { blurIn, fadeUp, fadeLeft, fadeRight, stagger, inView } from '../animati
 /* Focal points per photograph. `cover` on a narrow phone crops hard, and the
    default centre crop clips heads in both of these frames. */
 const FOCAL = {
-  wedding: '50% 40%',
-  sangeet: '46% 32%',
+  wedding: '50% 42%',
+  reception: '50% 32%',
 }
 
 /* One ceremony: full-bleed photograph, then the practical details on ivory.

@@ -77,15 +77,18 @@ export const events = [
     dressCode: 'Indian Formal',
     // Exact pin supplied by the family.
     mapsUrl: 'https://maps.google.com/?q=28.37615602428128,79.45425833921657',
-    photo: 'sangeet',
+    photo: 'reception',
   },
 ]
 
-/* ---- Photo gallery strip ----------------------------------------------- */
+/* ---- Photo gallery strip -----------------------------------------------
+   The first entry is the large lead frame, the next two sit side by side,
+   and anything flagged `wide` renders as a full-width landscape band. */
 export const gallery = [
-  { src: 'gallery-1', key: 'gallery-1', caption: 'The Bride' },
-  { src: 'gallery-3', key: 'gallery-3', caption: 'The Groom' },
-  { src: 'gallery-2', key: 'gallery-2', caption: 'The Details' },
+  { key: 'gallery-lead', src: 'gallery-lead', caption: 'Together' },
+  { key: 'gallery-bride', src: 'gallery-bride', caption: 'The Bride' },
+  { key: 'gallery-groom', src: 'gallery-groom', caption: 'The Groom' },
+  { key: 'gallery-hands', src: 'gallery-hands', caption: 'The Details', wide: true },
 ]
 
 export const closing = {
