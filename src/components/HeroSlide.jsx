@@ -1,18 +1,22 @@
 import { motion } from 'framer-motion'
 import Photo from './Photo'
 import Ornament from './Ornament'
+import { Crest, Mandala, CornerBrackets, AndRule } from './Motifs'
 import { EASE, blurIn } from '../animations'
 import { couple, weddingDate, invitation } from '../data/wedding'
 
-/* Opening screen: full-bleed portrait, names in gold foil on a frosted panel.
+/* Opening screen, built like a printed invitation card.
 
-   public/img/hero.jpg is deliberately pre-cropped to a tall 1:2 portrait
-   rather than the 2:3 the camera shot. The phone column is ~430x975, an
-   aspect near 0.44, so `cover` on the original crops horizontally only and
-   renders the photo's FULL height — which on that frame is 43% empty ceiling
-   above their heads. No objectPosition can fix that; the crop has to happen
-   in the file. Faces now land around 20-35% of the frame, well clear of the
-   names panel. Re-crop to a similar aspect if you swap the photo. */
+   A gold crest sits above an arched photograph set inside a double rule, and
+   the wording runs below on ivory over a faint mandala. Nothing
+   is overlaid on the photo itself — an overlay panel always lands on the
+   couple, because they occupy the middle of every frame in this shoot and
+   `cover` gives no way to move them.
+
+   The photo block's aspect ratio matches public/img/hero.jpg exactly (25/32),
+   so `cover` has nothing to crop and the frame is never clipped. Shortening
+   was done in the file instead — trimmed from the bottom of the gown, which
+   is expendable, rather than letting CSS shave the tops of their heads. */
 export default function HeroSlide() {
   const d = new Date(weddingDate)
   const dateLine = `${String(d.getDate()).padStart(2, '0')} . ${String(
@@ -20,132 +24,135 @@ export default function HeroSlide() {
   ).padStart(2, '0')} . ${d.getFullYear()}`
 
   return (
-    <section style={{ position: 'relative', height: '100svh', minHeight: 560, overflow: 'hidden' }}>
-      <Photo name="hero" alt="" priority kenburns objectPosition="50% 25%" />
+    <section
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        // Warm glow rather than flat paper.
+        background:
+          'radial-gradient(120% 65% at 50% 8%, #fffdf8 0%, var(--cream) 42%, var(--cream-warm) 100%)',
+        paddingBottom: 30,
+      }}
+    >
+      <CornerBrackets />
 
-      {/* legibility scrims: light at the top for the label, deep at the base */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(180deg, rgba(36,7,16,0.55) 0%, rgba(36,7,16,0.12) 26%, rgba(36,7,16,0.05) 48%, rgba(36,7,16,0.62) 82%, rgba(36,7,16,0.86) 100%)',
-        }}
-      />
+      {/* ---- Crest, then the arched photograph ---- */}
+      <div style={{ padding: '14px 26px 0', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+          <Crest />
+        </div>
 
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-      >
-        {/* ---- TOP ---- */}
         <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: EASE, delay: 0.35 }}
-          style={{ padding: '38px 24px 0', textAlign: 'center' }}
+          initial={{ opacity: 0, y: 26, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.3, ease: EASE }}
+          style={{
+            position: 'relative',
+            aspectRatio: '25 / 32',
+            // Dome top, barely-rounded base — the mandap arch.
+            borderRadius: '48% 48% 6px 6px / 31% 31% 1% 1%',
+            overflow: 'hidden',
+            border: '1px solid rgba(201,148,42,0.55)',
+            // Double rule: cream gap, then a second finer gold line outside it.
+            boxShadow:
+              '0 0 0 5px var(--cream), 0 0 0 6px rgba(201,148,42,0.32), 0 20px 44px rgba(74,15,32,0.18)',
+          }}
         >
-          <div className="label" style={{ color: 'var(--gold-light)' }}>
-            {invitation.eyebrow}
-          </div>
-          <div style={{ marginTop: 14 }}>
-            <Ornament width={92} color="var(--gold-light)" />
-          </div>
+          <Photo name="hero" alt="" priority kenburns objectPosition="50% 50%" />
         </motion.div>
+      </div>
 
-        {/* faces sit in this gap — keep it breathing */}
-        <div style={{ flex: 1, minHeight: 120 }} />
+      {/* ---- Wording ---- */}
+      <div style={{ position: 'relative', padding: '30px 26px 0', textAlign: 'center' }}>
+        {/* mandala watermark behind the names */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 26,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        >
+          <Mandala size={300} opacity={0.055} />
+        </div>
 
-        {/* ---- BOTTOM ---- */}
-        <div style={{ padding: '0 12px 26px' }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
           <motion.div
-            className="frost"
-            initial={{ opacity: 0, y: 34 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.65 }}
-            style={{ padding: '22px 20px 24px', textAlign: 'center' }}
+            transition={{ duration: 1, ease: EASE, delay: 0.45 }}
           >
-            <motion.div
-              variants={blurIn}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: 0.95 }}
-              className="script shimmer-light"
-              style={{ fontSize: 42, lineHeight: 1.06 }}
-            >
-              {couple.groom.name}
-            </motion.div>
+            <div className="label">{invitation.eyebrow}</div>
+          </motion.div>
 
+          <div style={{ margin: '15px 0 20px' }}>
+            <Ornament width={104} delay={0.5} />
+          </div>
+
+          <motion.div
+            variants={blurIn}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.65 }}
+            className="script shimmer"
+            style={{ fontSize: 50, lineHeight: 1.02 }}
+          >
+            {couple.groom.name}
+          </motion.div>
+
+          <AndRule />
+
+          <motion.div
+            variants={blurIn}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.85 }}
+            className="script shimmer"
+            style={{ fontSize: 50, lineHeight: 1.02 }}
+          >
+            {couple.bride.name}
+          </motion.div>
+
+          <div style={{ margin: '22px 0 18px' }}>
+            <Ornament width={132} delay={1} />
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1.2 }}
+          >
             <div
               className="serif-caps"
-              style={{
-                fontSize: 11,
-                color: 'var(--gold-light)',
-                opacity: 0.9,
-                margin: '4px 0 2px',
-              }}
+              style={{ fontSize: 15, color: 'var(--text-dark)', letterSpacing: '0.28em' }}
             >
-              and
+              {dateLine}
             </div>
-
-            <motion.div
-              variants={blurIn}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: 1.15 }}
-              className="script shimmer-light"
-              style={{ fontSize: 42, lineHeight: 1.06 }}
-            >
-              {couple.bride.name}
-            </motion.div>
-
-            <div style={{ margin: '16px 0 14px' }}>
-              <Ornament width={110} color="var(--gold-light)" />
+            <div className="label" style={{ marginTop: 11, color: 'var(--text-soft)' }}>
+              {invitation.city}
             </div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.5 }}
-            >
-              <div
-                className="serif-caps"
-                style={{ fontSize: 14, color: '#fdf8f0', letterSpacing: '0.26em' }}
-              >
-                {dateLine}
-              </div>
-              <div
-                className="label"
-                style={{ marginTop: 9, color: 'var(--gold-light)', opacity: 0.85 }}
-              >
-                {invitation.city}
-              </div>
-            </motion.div>
           </motion.div>
 
           {/* scroll cue */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 2 }}
-            style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}
+            transition={{ duration: 1, delay: 1.7 }}
+            style={{ display: 'flex', justifyContent: 'center', marginTop: 26 }}
           >
             <motion.div
-              animate={{ y: [0, 7, 0], opacity: [0.5, 1, 0.5] }}
+              animate={{ y: [0, 6, 0], opacity: [0.45, 1, 0.45] }}
               transition={{ duration: 2.1, repeat: Infinity, ease: 'easeInOut' }}
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
             >
-              <span className="label" style={{ fontSize: 8.5, color: 'var(--gold-light)' }}>
+              <span className="label" style={{ fontSize: 8.5, color: 'var(--gold)' }}>
                 Scroll
               </span>
               <span
                 aria-hidden="true"
-                style={{ width: 1, height: 22, background: 'var(--gold-light)', opacity: 0.7 }}
+                style={{ width: 1, height: 20, background: 'var(--gold)', opacity: 0.65 }}
               />
             </motion.div>
           </motion.div>

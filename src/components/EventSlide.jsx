@@ -1,95 +1,62 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Photo from './Photo'
 import Ornament from './Ornament'
 import Reveal from './Reveal'
 import SplitText from './SplitText'
-import { blurIn, fadeUp, fadeLeft, fadeRight, stagger, inView } from '../animations'
+import { blurIn, fadeUp, fadeLeft, fadeRight, stagger, inView, EASE } from '../animations'
 
-/* Focal points per photograph. `cover` on a narrow phone crops hard, and the
-   default centre crop clips heads in both of these frames. */
-const FOCAL = {
-  wedding: '50% 42%',
-  reception: '50% 32%',
-}
+/* One ceremony: a clean photograph, then the wording and details on ivory.
 
-/* One ceremony: full-bleed photograph, then the practical details on ivory.
+   Nothing sits on the photo. The block's aspect ratio matches the image files
+   exactly (25/32), so `cover` has nothing to crop and a frame is never
+   clipped. Each file was shortened to that aspect deliberately — trimming
+   whichever edge is expendable (ceiling above, or hem below) rather than
+   letting CSS shave the tops of their heads.
+
+   There is deliberately no parallax here. Parallax needs the image to overscan
+   its container to have room to travel, and that overscan is itself a crop.
+   The entrance animation is a fade and rise instead, which costs no pixels.
+
    `index` only alternates which side the detail rows slide in from, so two
    consecutive events don't move identically. */
 export default function EventSlide({ event, index = 0 }) {
-  const ref = useRef(null)
-  const reduceMotion = useReducedMotion()
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
-  // Photo drifts slower than the page — the classic parallax depth cue.
-  const y = useTransform(scrollYProgress, [0, 1], ['-7%', '7%'])
-
   const slideIn = index % 2 === 0 ? fadeLeft : fadeRight
 
   return (
     <section style={{ background: 'var(--cream)' }}>
-      {/* ---- Photograph ---- */}
-      <div
-        ref={ref}
-        style={{ position: 'relative', height: '62svh', minHeight: 390, overflow: 'hidden' }}
+      {/* ---- Photograph, completely clean ---- */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={inView}
+        transition={{ duration: 1, ease: EASE }}
+        style={{
+          position: 'relative',
+          // Matches the file's aspect — nothing to crop.
+          aspectRatio: '25 / 32',
+          overflow: 'hidden',
+        }}
       >
-        <motion.div
-          style={{
-            position: 'absolute',
-            inset: '-8% 0',
-            y: reduceMotion ? 0 : y,
-          }}
-        >
-          <Photo
-            name={event.photo}
-            alt=""
-            objectPosition={FOCAL[event.photo] ?? 'center 40%'}
-          />
-        </motion.div>
+        <Photo name={event.photo} alt="" objectPosition="50% 50%" />
+      </motion.div>
 
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background:
-              'linear-gradient(180deg, rgba(36,7,16,0.32) 0%, rgba(36,7,16,0.05) 35%, rgba(36,7,16,0.55) 88%, rgba(36,7,16,0.75) 100%)',
-          }}
+      {/* ---- Wording + details ---- */}
+      <div style={{ padding: '28px 26px 58px', textAlign: 'center' }}>
+        <SplitText
+          tag="div"
+          text={event.label}
+          by="word"
+          className="label"
+          style={{ color: 'var(--gold-deep)', fontSize: 9.5 }}
         />
 
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            padding: '0 24px 24px',
-            textAlign: 'center',
-            zIndex: 2,
-          }}
-        >
-          <SplitText
-            tag="div"
-            text={event.label}
-            by="word"
-            className="label"
-            style={{ color: 'var(--gold-light)', fontSize: 9.5 }}
-          />
-        </div>
-      </div>
-
-      {/* ---- Details ---- */}
-      <div style={{ padding: '34px 26px 58px', textAlign: 'center' }}>
         <motion.div
           variants={blurIn}
           initial="hidden"
           whileInView="visible"
           viewport={inView}
           className="script"
-          style={{ fontSize: 47, lineHeight: 1.05, color: event.headingColor }}
+          style={{ fontSize: 47, lineHeight: 1.05, color: event.headingColor, marginTop: 12 }}
         >
           {event.heading}
         </motion.div>
@@ -122,7 +89,14 @@ export default function EventSlide({ event, index = 0 }) {
             value={
               <>
                 <span style={{ display: 'block', fontWeight: 500 }}>{event.venue}</span>
-                <span style={{ display: 'block', fontSize: 13, color: 'var(--text-soft)', marginTop: 3 }}>
+                <span
+                  style={{
+                    display: 'block',
+                    fontSize: 13,
+                    color: 'var(--text-soft)',
+                    marginTop: 3,
+                  }}
+                >
                   {event.address}
                 </span>
               </>

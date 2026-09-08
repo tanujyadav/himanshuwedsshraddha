@@ -84,38 +84,51 @@ sit at positions 1200-1385 and 1557-1679). Each is resized from a ~12 MB
 | `hero.jpg` | 1346 | opening screen |
 | `countdown.jpg` | 1635 | countdown background |
 | `wedding.jpg` | 1266 | The Wedding |
-| `reception.jpg` | 1607 | The Reception |
+| `reception.jpg` | 1591 | The Reception |
 | `gallery-lead.jpg` | 1300 | photo strip - "Together" |
 | `gallery-bride.jpg` | 917 | photo strip - "The Bride" |
 | `gallery-groom.jpg` | 815 | photo strip - "The Groom" |
 | `gallery-hands.jpg` | 1620 | photo strip - "The Details" (wide band) |
 | `closing.jpg` | 1662 | closing screen |
 
-### Two of them are cropped, not just resized
+### The rule: crop in the file, never in CSS
 
-**`hero.jpg` is 1000x2000 (1:2)**, not 2:3 like the rest. The phone column is
-roughly 430x975, an aspect near **0.44**. When a container is *narrower* than
-the image, `cover` crops horizontally only and renders the image's **full
-height** - so a 2:3 photo shows all its empty sky or ceiling, and no
-`objectPosition` can remove it. The crop has to happen in the file.
+`hero.jpg`, `wedding.jpg` and `reception.jpg` are all **1000x1280 (25/32)**,
+and their blocks are set to `aspectRatio: '25 / 32'` so `cover` has nothing to
+crop. That is the whole trick, and it is worth understanding before swapping a
+photo.
 
-At a 1:2 aspect the widest possible crop of a 4672x7008 original uses **75% of
-the width and the full height** - that is the zoom floor, and going narrower
-than that only crops in tighter. `tools-crop.ps1` does it:
+`objectFit: cover` always crops whichever dimension doesn't fit, and the crop
+is centred by default. On a ~430px-wide phone column that repeatedly sliced the
+tops of their heads off, because in almost every frame of this shoot the couple
+sit high in the tall dimension. `objectPosition` cannot fix it - it only slides
+the crop window, it never removes the crop.
+
+So each file is shortened to 25/32 **deliberately**, trimming whichever edge is
+expendable, and the container then matches it exactly:
 
 ```powershell
-# hero: the widest 1:2 crop possible, centred on the couple
+# hero + wedding: heads near the top -> trim the hem at the bottom
 ./tools-crop.ps1 -Src ORIGINAL.JPG -Out public/img/hero.jpg `
-  -X0 0.175 -X1 0.925 -Y0 0.0 -Y1 1.0 -OutWidth 1000 -Quality 80
+  -X0 0.0 -X1 1.0 -Y0 0.0 -Y1 0.8533 -OutWidth 1000 -Quality 82
+
+# reception: gown train runs to the bottom edge -> trim the ceiling instead
+./tools-crop.ps1 -Src ORIGINAL.JPG -Out public/img/reception.jpg `
+  -X0 0.0 -X1 1.0 -Y0 0.147 -Y1 1.0 -OutWidth 1000 -Quality 82
 
 # gallery-hands: a wide band from the middle of a portrait frame
 ./tools-crop.ps1 -Src ORIGINAL.JPG -Out public/img/gallery-hands.jpg `
   -X0 0.0 -X1 1.0 -Y0 0.18 -Y1 0.62 -OutWidth 1300 -Quality 80
 ```
 
-`X0/X1/Y0/Y1` are the crop window as fractions of the original. For a
-full-bleed photo aim for an aspect near 0.45-0.50, with faces at roughly
-20-45% of the frame height so the names panel clears them.
+`X0/X1/Y0/Y1` are the crop window as fractions of the original. From a
+4672x7008 original, 25/32 is 85.33% of the height - so pick which 14.67% to
+lose. **Look at the photo first and decide, then crop from that edge.**
+
+Note that `hero.jpg` is the exception with no dark overlay or text on it at
+all; the wording sits below the arch on ivory. Same for the event slides. An
+overlay panel always landed on the couple, so the type moved off the photos
+entirely.
 
 ### Swapping a photo
 
