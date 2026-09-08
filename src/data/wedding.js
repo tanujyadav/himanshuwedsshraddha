@@ -58,7 +58,6 @@ export const events = [
     time: 'Dinner 7:00 PM onwards',
     venue: 'Garden Deoria',
     address: 'Deoria, Uttar Pradesh',
-    dressCode: 'Traditional',
     mapsUrl: 'https://maps.google.com/?q=Garden+Deoria+Uttar+Pradesh',
     photo: 'wedding',
   },
@@ -74,7 +73,6 @@ export const events = [
     time: 'Dinner 7:00 PM onwards',
     venue: 'Green Land',
     address: 'Near Suresh Sharma Nagar, Bareilly, Uttar Pradesh',
-    dressCode: 'Indian Formal',
     // Exact pin supplied by the family.
     mapsUrl: 'https://maps.google.com/?q=28.37615602428128,79.45425833921657',
     photo: 'reception',

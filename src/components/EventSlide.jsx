@@ -22,6 +22,36 @@ import { blurIn, fadeUp, fadeLeft, fadeRight, stagger, inView, EASE } from '../a
 export default function EventSlide({ event, index = 0 }) {
   const slideIn = index % 2 === 0 ? fadeLeft : fadeRight
 
+  /* Built as a list rather than four fixed rows, so the closing hairline
+     always lands on whichever row is genuinely last. Hard-coding `last` on one
+     Row leaves a stray border the moment a field is dropped. Any field left
+     empty in wedding.js simply omits its row. */
+  const rows = [
+    { label: 'Date', value: event.date },
+    { label: 'Time', value: event.time },
+    {
+      label: 'Venue',
+      value: event.venue ? (
+        <>
+          <span style={{ display: 'block', fontWeight: 500 }}>{event.venue}</span>
+          {event.address ? (
+            <span
+              style={{
+                display: 'block',
+                fontSize: 13,
+                color: 'var(--text-soft)',
+                marginTop: 3,
+              }}
+            >
+              {event.address}
+            </span>
+          ) : null}
+        </>
+      ) : null,
+    },
+    { label: 'Dress Code', value: event.dressCode },
+  ].filter((row) => row.value)
+
   return (
     <section style={{ background: 'var(--cream)' }}>
       {/* ---- Photograph, completely clean ---- */}
@@ -81,35 +111,16 @@ export default function EventSlide({ event, index = 0 }) {
           viewport={inView}
           style={{ margin: 0, textAlign: 'left' }}
         >
-          <Row variants={slideIn} label="Date" value={event.date} accent={event.headingColor} />
-          <Row variants={slideIn} label="Time" value={event.time} accent={event.headingColor} />
-          <Row
-            variants={slideIn}
-            label="Venue"
-            value={
-              <>
-                <span style={{ display: 'block', fontWeight: 500 }}>{event.venue}</span>
-                <span
-                  style={{
-                    display: 'block',
-                    fontSize: 13,
-                    color: 'var(--text-soft)',
-                    marginTop: 3,
-                  }}
-                >
-                  {event.address}
-                </span>
-              </>
-            }
-            accent={event.headingColor}
-          />
-          <Row
-            variants={slideIn}
-            label="Dress Code"
-            value={event.dressCode}
-            accent={event.headingColor}
-            last
-          />
+          {rows.map((row, i) => (
+            <Row
+              key={row.label}
+              variants={slideIn}
+              label={row.label}
+              value={row.value}
+              accent={event.headingColor}
+              last={i === rows.length - 1}
+            />
+          ))}
         </motion.dl>
 
         <Reveal variants={fadeUp} delay={0.15}>

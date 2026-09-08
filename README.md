@@ -21,7 +21,7 @@ left deliberately obvious so they can't ship unnoticed:
 | `closing.rsvpPhone` | `''` (empty) | optional phone — becomes a tap-to-call link |
 
 Everything else — names, both sets of parents, both dates, both venues, the
-Bareilly map pin, times, dress codes, the hashtag — is already set from what
+Bareilly map pin, times, the hashtag — is already set from what
 you sent.
 
 **On Shraddha's parents:** the line reads *"Daughter of Mrs. Shila Singh"*,
