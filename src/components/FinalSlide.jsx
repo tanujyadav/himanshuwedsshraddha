@@ -105,46 +105,6 @@ export default function FinalSlide() {
           </div>
         </motion.div>
 
-        {/* ---- RSVP ---- */}
-        {closing.rsvpName ? (
-          <Reveal variants={fadeUp} delay={0.15}>
-            <div
-              className="frost"
-              style={{ marginTop: 30, padding: '16px 20px', display: 'inline-block' }}
-            >
-              <div className="label" style={{ color: 'var(--gold-light)', fontSize: 8.5 }}>
-                RSVP
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--serif)',
-                  fontSize: 16,
-                  color: '#fdf8f0',
-                  marginTop: 7,
-                }}
-              >
-                {closing.rsvpName}
-              </div>
-              {closing.rsvpPhone ? (
-                <a
-                  href={`tel:${closing.rsvpPhone.replace(/\s+/g, '')}`}
-                  style={{
-                    display: 'inline-block',
-                    marginTop: 6,
-                    fontFamily: 'var(--serif)',
-                    fontSize: 15,
-                    color: 'var(--gold-light)',
-                    textDecoration: 'none',
-                    borderBottom: '1px solid rgba(242,221,171,0.45)',
-                    paddingBottom: 1,
-                  }}
-                >
-                  {closing.rsvpPhone}
-                </a>
-              ) : null}
-            </div>
-          </Reveal>
-        ) : null}
 
         {couple.hashtag ? (
           <Reveal variants={fadeUp} delay={0.2}>

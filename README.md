@@ -9,23 +9,14 @@ npm run dev      # http://localhost:5173
 
 ---
 
-## 1. Still to fill in
+## 1. All the text lives in one file
 
-**All invitation text lives in one file: [`src/data/wedding.js`](src/data/wedding.js).**
-Nothing is hard-coded in the components. Two placeholders are still in there,
-left deliberately obvious so they can't ship unnoticed:
+**Every word on the invitation is in [`src/data/wedding.js`](src/data/wedding.js).**
+Nothing is hard-coded in the components — names, both sets of parents, both
+dates, both venues, the Bareilly map pin, times, the hashtag. There is no
+RSVP block; the closing screen ends on the couple's names and the hashtag.
 
-| In `src/data/wedding.js` | Currently | Replace with |
-|---|---|---|
-| `closing.rsvpName` | `Your Name` | who guests should RSVP to |
-| `closing.rsvpPhone` | `''` (empty) | optional phone — becomes a tap-to-call link |
-
-Everything else — names, both sets of parents, both dates, both venues, the
-Bareilly map pin, times, the hashtag — is already set from what
-you sent.
-
-If you clear `closing.rsvpPhone` or `closing.rsvpName`, that block simply
-doesn't render. Same for `couple.hashtag`.
+Clear `couple.hashtag` and that line simply doesn't render.
 
 ## 2. Background music
 
@@ -189,7 +180,7 @@ src/
     CountdownSlide.jsx  live countdown
     EventSlide.jsx      one component, both ceremonies
     GallerySlide.jsx    photo strip
-    FinalSlide.jsx      closing + RSVP
+    FinalSlide.jsx      closing screen
     Photo.jsx           blur-up image loader
     SplitText.jsx       per-word / per-letter text animation
     Reveal.jsx          scroll-reveal wrapper

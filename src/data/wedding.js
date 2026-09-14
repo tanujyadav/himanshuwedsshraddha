@@ -1,10 +1,6 @@
 /* ============================================================================
    EVERY piece of text on the invitation lives in THIS FILE.
    Nothing is hard-coded in the components — edit only here.
-
-   Still to fill in (left as obvious placeholders so they can't ship silently):
-     • both sets of parents' names
-     • the RSVP contact name / phone
    ========================================================================== */
 
 export const couple = {
@@ -54,9 +50,9 @@ export const events = [
       'rituals, the vows and the blessings.',
     date: 'Thursday, 26 November 2026',
     time: 'Dinner 7:00 PM onwards',
-    venue: 'Garden Deoria',
+    venue: 'Deoria',
     address: 'Deoria, Uttar Pradesh',
-    mapsUrl: 'https://maps.google.com/?q=Garden+Deoria+Uttar+Pradesh',
+    mapsUrl: 'https://maps.google.com/?q=Deoria+Uttar+Pradesh',
     photo: 'wedding',
   },
   {
@@ -91,8 +87,6 @@ export const closing = {
   line1: 'We cannot wait',
   line2: 'to celebrate with you',
   note: 'With love and excitement,',
-  rsvpName: 'Your Name',                             // ← replace (who guests RSVP to)
-  rsvpPhone: '',                                     // ← optional, e.g. '+91 98765 43210'
 }
 
 /* Background music — a soft melody, started only after the guest taps the
