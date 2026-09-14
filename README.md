@@ -75,9 +75,9 @@ sit at positions 1200-1385 and 1557-1679). Each is resized from a ~12 MB
 
 | File in `public/img/` | Gallery position | Where it appears |
 |---|---|---|
-| `hero.jpg` | 1346 | opening screen |
+| `hero.jpg` | 1266 | opening screen |
 | `countdown.jpg` | 1635 | countdown background |
-| `wedding.jpg` | 1266 | The Wedding |
+| `wedding.jpg` | 1324 | The Wedding |
 | `reception.jpg` | 1591 | The Reception |
 | `gallery-lead.jpg` | 1353 | photo strip - "Together" |
 | `gallery-bride.jpg` | 917 | photo strip - "The Bride" |

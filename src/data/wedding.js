@@ -17,7 +17,7 @@ export const couple = {
     name: 'Shraddha',
     // "Late" honours her father, who has passed away. Phrased to match the
     // groom's line above.
-    parents: 'Daughter of Late Mr. I.K. Bishen & Mrs. Shila Bishen',
+    parents: 'Daughter of Late I.K. Bishen & Mrs. Shila Bishen',
   },
 
   // Initials pressed into the envelope's wax seal.
