@@ -40,22 +40,22 @@ Use a track you have the rights to. Free options: the YouTube Audio Library,
 Pixabay Music, or Free Music Archive. A soft instrumental — piano, sitar,
 strings — suits this better than anything with vocals.
 
-## 3. Deploy to Vercel
+## 3. Deployed
+
+**Live at https://himanshuwedsshraddha.vercel.app** — the Vercel project is
+`himanshuwedsshraddha` under the `tanujyadav` account, deployment protection
+(SSO) disabled so guests can open it without a Vercel login.
+
+To push a change live:
 
 ```bash
 npm run build            # sanity-check it compiles
-npm install -g vercel
-vercel login             # opens your browser / emails a link — click it
-vercel --prod            # press Enter for every question
+npx vercel --prod --yes
 ```
 
-### Then do this one follow-up
-
-WhatsApp link previews need **absolute** URLs. Once you have your real domain,
-open [`index.html`](index.html) and replace both `https://your-app.vercel.app`
-values in the `og:image` and `og:url` tags with it, then run `vercel --prod`
-again. Skip this and the invite still works — the WhatsApp thumbnail just
-won't show.
+`index.html`'s `og:image`/`og:url` tags already point at the live domain, so
+WhatsApp/iMessage link previews work with no further edits — only touch them
+if the domain ever changes.
 
 ## 4. Photos
 
