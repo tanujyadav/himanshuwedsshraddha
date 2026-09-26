@@ -30,7 +30,7 @@ export default function GallerySlide() {
   const bands = gallery.filter((g) => g.wide)
 
   return (
-    <section style={{ background: 'var(--cream-warm)', padding: '62px 20px 66px' }}>
+    <section style={{ background: 'var(--cream-warm)', padding: '62px var(--page-padding-x) 66px' }}>
       <div style={{ textAlign: 'center', marginBottom: 30 }}>
         <Reveal>
           <div className="label">A Few Moments</div>

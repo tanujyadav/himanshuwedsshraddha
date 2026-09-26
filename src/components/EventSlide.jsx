@@ -71,7 +71,7 @@ export default function EventSlide({ event, index = 0 }) {
       </motion.div>
 
       {/* ---- Wording + details ---- */}
-      <div style={{ padding: '28px 26px 58px', textAlign: 'center' }}>
+      <div style={{ padding: '28px var(--page-padding-x) 58px', textAlign: 'center' }}>
         <SplitText
           tag="div"
           text={event.label}

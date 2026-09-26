@@ -44,7 +44,7 @@ export default function FinalSlide() {
           position: 'relative',
           zIndex: 2,
           width: '100%',
-          padding: '0 26px 46px',
+          padding: '0 var(--page-padding-x) 46px',
           textAlign: 'center',
         }}
       >

@@ -40,7 +40,7 @@ export default function HeroSlide() {
           The same illustrated image used on the envelope front
           (public/img/ganesha.png), small, in place of the abstract diamond
           crest this spot used to hold. */}
-      <div style={{ padding: '14px 26px 0', position: 'relative', zIndex: 2 }}>
+      <div style={{ padding: '14px var(--page-padding-x) 0', position: 'relative', zIndex: 2 }}>
         <motion.div
           initial={{ opacity: 0, y: -10, scale: 0.7 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -88,7 +88,7 @@ export default function HeroSlide() {
       </div>
 
       {/* ---- Wording ---- */}
-      <div style={{ position: 'relative', padding: '30px 26px 0', textAlign: 'center' }}>
+      <div style={{ position: 'relative', padding: '30px var(--page-padding-x) 0', textAlign: 'center' }}>
         {/* mandala watermark behind the names */}
         <div
           style={{

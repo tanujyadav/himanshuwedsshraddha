@@ -8,12 +8,15 @@ export const couple = {
   groom: {
     name: "Himanshu",
     parents: "Son of Mr. Jitendra Singh & Mrs. Sanil Yadav",
+    Grandparents: "Grandson of Late Manohar Singh & Late Sukhrani Devi",
   },
   bride: {
     name: "Shraddha",
     // "Late" honours her father, who has passed away. Phrased to match the
     // groom's line above.
-    parents: "Daughter of Late I.K. Bishen & Mrs. Shila Bishen",
+    parents: "Daughter of Late Indra Kishore Singh & Mrs. Shila Singh",
+    Grandparents:
+      "Granddaughter of Shri Shyam Bahadur Singh & Smt. Indrawati Singh",
   },
 
   // Initials pressed into the envelope's wax seal.

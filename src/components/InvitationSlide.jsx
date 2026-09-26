@@ -12,14 +12,30 @@ export default function InvitationSlide() {
     <section
       style={{
         background: 'var(--cream)',
-        padding: '68px 26px 74px',
+        padding: '68px var(--page-padding-x) 74px',
         textAlign: 'center',
         position: 'relative',
       }}
     >
-      {/* The same invocation printed atop the envelope front, repeated here
-          since this is the first formal page a guest reads. */}
+      {/* Same Ganesha + invocation printed on the envelope front and the
+          hero arch, repeated here since this is the first formal page a
+          guest reads. */}
       <Reveal>
+        <img
+          src="/img/ganesha.png"
+          alt=""
+          style={{
+            width: 44,
+            height: 44,
+            objectFit: 'contain',
+            margin: '0 auto 10px',
+            display: 'block',
+            filter: 'drop-shadow(0 1px 2px rgba(74,15,32,0.25))',
+          }}
+        />
+      </Reveal>
+
+      <Reveal delay={0.1}>
         <div
           className="devanagari"
           style={{ fontSize: 13, fontWeight: 500, color: 'var(--gold-deep)', marginBottom: 14 }}
@@ -28,7 +44,7 @@ export default function InvitationSlide() {
         </div>
       </Reveal>
 
-      <Reveal delay={0.1}>
+      <Reveal delay={0.2}>
         <div className="label">{invitation.formalEyebrow}</div>
       </Reveal>
 
@@ -63,6 +79,16 @@ export default function InvitationSlide() {
           {couple.groom.parents}
         </p>
       </Reveal>
+      {couple.groom.Grandparents ? (
+        <Reveal variants={fadeUp} delay={0.18}>
+          <p
+            className="body-text"
+            style={{ fontSize: 11.5, margin: '3px 0 0', color: 'var(--text-soft)', opacity: 0.8 }}
+          >
+            {couple.groom.Grandparents}
+          </p>
+        </Reveal>
+      ) : null}
 
       {/* ---- Joiner ---- */}
       <Reveal variants={fadeUp} delay={0.1}>
@@ -93,6 +119,16 @@ export default function InvitationSlide() {
           {couple.bride.parents}
         </p>
       </Reveal>
+      {couple.bride.Grandparents ? (
+        <Reveal variants={fadeUp} delay={0.18}>
+          <p
+            className="body-text"
+            style={{ fontSize: 11.5, margin: '3px 0 0', color: 'var(--text-soft)', opacity: 0.8 }}
+          >
+            {couple.bride.Grandparents}
+          </p>
+        </Reveal>
+      ) : null}
 
       <div style={{ margin: '32px 0 28px' }}>
         <Ornament width={128} />

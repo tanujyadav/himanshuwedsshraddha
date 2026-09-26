@@ -56,7 +56,7 @@ export default function CountdownSlide() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '0 22px 42px',
+          padding: '0 var(--page-padding-x) 42px',
           textAlign: 'center',
         }}
       >
