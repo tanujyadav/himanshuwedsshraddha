@@ -17,7 +17,18 @@ export default function InvitationSlide() {
         position: 'relative',
       }}
     >
+      {/* The same invocation printed atop the envelope front, repeated here
+          since this is the first formal page a guest reads. */}
       <Reveal>
+        <div
+          className="devanagari"
+          style={{ fontSize: 13, fontWeight: 500, color: 'var(--gold-deep)', marginBottom: 14 }}
+        >
+          ॥ श्री गणेशाय नमः ॥
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.1}>
         <div className="label">{invitation.formalEyebrow}</div>
       </Reveal>
 

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import Photo from './Photo'
 import Ornament from './Ornament'
-import { Crest, Mandala, CornerBrackets, AndRule } from './Motifs'
+import { Mandala, CornerBrackets, AndRule } from './Motifs'
 import { EASE, blurIn } from '../animations'
 import { couple, weddingDate, invitation } from '../data/wedding'
 
@@ -36,11 +36,28 @@ export default function HeroSlide() {
     >
       <CornerBrackets />
 
-      {/* ---- Crest, then the arched photograph ---- */}
+      {/* ---- Ganesha, then the arched photograph ----
+          The same illustrated image used on the envelope front
+          (public/img/ganesha.png), small, in place of the abstract diamond
+          crest this spot used to hold. */}
       <div style={{ padding: '14px 26px 0', position: 'relative', zIndex: 2 }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
-          <Crest />
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -10, scale: 0.7 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
+          style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}
+        >
+          <img
+            src="/img/ganesha.png"
+            alt=""
+            style={{
+              width: 40,
+              height: 40,
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 1px 2px rgba(74,15,32,0.25))',
+            }}
+          />
+        </motion.div>
 
         {/* Flex row so the arch can size from its height: on a short phone the
             height cap wins and the arch simply gets smaller, keeping the names
