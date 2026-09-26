@@ -154,3 +154,85 @@ export function AndRule({ color = 'var(--gold)', text = 'and' }) {
     </div>
   )
 }
+
+/* Om (ॐ) — set in a Devanagari face rather than hand-drawn. The glyph is a
+   precise, community-recognised symbol; approximating it in SVG risks
+   getting the form subtly wrong. Sat via .devanagari (index.css) which loads
+   Noto Sans Devanagari for exactly this. */
+export function Om({ size = 22, color = 'var(--gold)' }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="devanagari"
+      style={{ display: 'inline-block', fontSize: size, color, lineHeight: 1 }}
+    >
+      ॐ
+    </span>
+  )
+}
+
+/* Ganesha — the elephant-headed deity invoked at the start of an undertaking,
+   printed traditionally at the top of Indian wedding invitations as a
+   blessing. A seated silhouette (crown, big fan ears, a properly tapered
+   trunk curling to one side, one hand raised in blessing, the other holding
+   a modak, a bell-shaped seated form) built from filled shapes rather than
+   thin single-width outlines — solid fills read as a carved or foil-stamped
+   idol at small sizes; a thin stroke sketch (the first pass at this) reads
+   as a diagram instead. Single flat colour throughout, in the same
+   abstracted spirit as this file's other motifs — this is not attempting
+   realism, only to be unmistakably recognisable as Ganesha. */
+export function Ganesha({ size = 64, color = 'var(--royal)' }) {
+  // `size` is the WIDTH; height follows the viewBox's own 100:116 aspect
+  // (the seated body makes it taller than it is wide) so it's never
+  // stretched or squashed by a caller passing a single square size.
+  return (
+    <svg
+      width={size}
+      height={(size * 116) / 100}
+      viewBox="0 0 100 116"
+      fill="none"
+      aria-hidden="true"
+    >
+      <g fill={color}>
+        {/* seated body, bell-shaped — folded legs read as a single draped form */}
+        <path d="M29 112 Q25 82 50 78 Q75 82 71 112 Q71 115 67 115 L33 115 Q29 115 29 112 Z" />
+        {/* belly */}
+        <circle cx="50" cy="79" r="14" />
+        {/* left arm, raised in blessing (abhaya mudra) */}
+        <ellipse cx="24" cy="62" rx="6.5" ry="15" transform="rotate(-30 24 62)" />
+        <circle cx="16" cy="46" r="6.5" />
+        {/* right arm, resting with the modak */}
+        <ellipse cx="72" cy="82" rx="6.5" ry="13" transform="rotate(25 72 82)" />
+        <circle cx="80" cy="92" r="7" />
+        {/* fan-shaped ears */}
+        <path d="M20 28 Q2 26 2 44 Q2 60 20 60 Q30 58 28 44 Q30 32 20 28 Z" />
+        <path d="M80 28 Q98 26 98 44 Q98 60 80 60 Q70 58 72 44 Q70 32 80 28 Z" />
+        {/* head */}
+        <circle cx="50" cy="42" r="22" />
+        {/* crown */}
+        <path d="M30 24 Q50 2 70 24 Q70 29 63 29 L37 29 Q30 29 30 24 Z" />
+        <circle cx="50" cy="4" r="3.4" />
+        {/* tusk */}
+        <path d="M37 52 L31 60 L36 61 Z" />
+      </g>
+
+      {/* trunk — a proper taper, not a constant-width line: two curves
+          closed into one filled shape, wide at the face, narrowing to a
+          small curl at the tip. */}
+      <path
+        d="M42 56
+           C36 68 34 80 42 90
+           C46 95 54 96 58 91
+           C54 93 49 91 47 87
+           C43 80 45 70 50 62
+           C53 58 53 54 49 53
+           C46 52 43 53 42 56 Z"
+        fill={color}
+      />
+
+      {/* eyes, a shade lighter so they read as detail rather than holes */}
+      <circle cx="42" cy="39" r="2.3" fill={color} opacity="0.45" />
+      <circle cx="58" cy="39" r="2.3" fill={color} opacity="0.45" />
+    </svg>
+  )
+}

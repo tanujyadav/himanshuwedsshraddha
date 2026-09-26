@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap');
 
 :root {
   /* ---- Royal palette: deep maroon + antique gold on ivory ---- */
@@ -89,6 +89,8 @@ button { font-family: inherit; }
    gradient painted and simply disappears — names looked cut off at 1.05.
    Don't override this below ~1.35 on a shimmer element. */
 .script { font-family: var(--script); font-weight: 400; line-height: 1.38; }
+
+.devanagari { font-family: 'Noto Sans Devanagari', 'Noto Sans', sans-serif; }
 
 .serif-caps {
   font-family: var(--serif);

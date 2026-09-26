@@ -145,7 +145,32 @@ hard-coded slots: the first entry is the large lead frame, the next two sit
 side by side, and any entry flagged `wide: true` renders as a full-width
 landscape band.
 
-## 5. Mobile
+## 5. The envelope front
+
+Before a guest can tap the envelope open, it shows its FRONT first — the
+traditional invocation printed at the top of a Hindu wedding card ("shree
+Ganeshaya namah", Om, Ganesha, "shubh vivah") — then turns over on its own to
+the plain envelope back, which is what actually responds to a tap. This lives
+in `EnvelopeFrontFace.jsx` and the flip timing in `EnvelopeIntro.jsx`.
+
+**`public/img/ganesha.png`** is a real illustrated Ganesha (gold line-art,
+transparent background), not a hand-drawn SVG — a flat vector attempt at this
+specific subject didn't read as convincingly as an actual illustration at
+this size. Sourced from a Pinterest pin the family chose
+(`pinterest.com/pin/930556341745106118`, credited there to Krishnan
+Srividhya); the original was a JPEG with a plain white background, keyed to
+transparent with `tools-keyout.ps1` so it sits on the ivory card without a
+white box around it:
+
+```powershell
+./tools-keyout.ps1 -Src ORIGINAL.jpg -Out public/img/ganesha.png
+```
+
+If you swap in a different Ganesha image, keep it roughly square (the card
+sizes it to 64x64) and either source a transparent PNG directly or run it
+through the same script if it comes with a white background.
+
+## 6. Mobile
 
 Checked in real headless Chrome with touch emulation at 360x640, 390x844,
 412x915 and 430x932: no horizontal scroll, no tap target under 44px, no
@@ -165,7 +190,7 @@ Tall full-bleed sections use `svh`, not `vh`, so mobile browser chrome doesn't
 cause a jump, and they are floored in px (`max(96svh, 620px)`) so a landscape
 phone can't squeeze two blocks of type together.
 
-## 6. How it's put together
+## 7. How it's put together
 
 ```
 src/
@@ -197,7 +222,7 @@ Per-word/letter animation uses transform and opacity only — deliberately no
 `blur()` filter, which drops frames badly on mid-range Android when it runs
 across dozens of spans at once.
 
-## 7. Saving your work
+## 8. Saving your work
 
 ```bash
 git add . && git commit -m "save"   # before every round of changes

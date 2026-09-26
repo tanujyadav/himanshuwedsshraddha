@@ -2,23 +2,68 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { EASE, EASE_SOFT } from '../animations'
 import { couple } from '../data/wedding'
+import EnvelopeFrontFace from './EnvelopeFrontFace'
+
+// How long the wrapper's turn itself takes, and how long the front sits on
+// screen before it starts. Both the animation and the content-swap timer
+// below are built from these two numbers so they can't drift out of sync.
+const FLIP_DELAY_MS = 1700
+const FLIP_DURATION_S = 1.1
 
 /* Tap-to-open envelope.
 
    Drawn entirely with CSS and SVG — no image asset to design or ship. The
-   sequence is: the wax seal breaks, the flap swings back, the card rises out,
-   then the whole scene fades and hands control to the invitation.
+   sequence now runs in two parts:
+
+     1. The card's FRONT shows first (Ganesha, Om, the Shubh Vivah invocation)
+        — what a printed invitation shows before anyone opens it. After a
+        short pause it flips over on its own to reveal the plain envelope
+        BACK (the flap-and-seal design).
+     2. Only then can a tap do anything. The wax seal breaks, the flap swings
+        back, the card rises out, then the whole scene fades and hands
+        control to the invitation.
+
+   The flip does NOT use the textbook two-sided `backface-visibility: hidden`
+   card (front and back stacked as siblings, each hidden on its far side). In
+   this exact nesting — a motion.div driving rotateY, one level below a plain
+   div with `perspective`, inside a further-out motion.div — headless Chromium
+   (and it may not be limited to headless) mis-resolves which of two coplanar,
+   backface-hidden siblings is "facing the camera": the later DOM node (the
+   back) painted regardless of the wrapper's rotation, even with an explicit
+   rotateY(0deg) on the front to rule out a `transform: none` ambiguity.
+   Confirmed by substituting a plain red test div for the front's real content
+   — still hidden — which rules out anything about EnvelopeFrontFace itself.
+
+   Instead: only ONE face is ever mounted. The wrapper still animates rotateY
+   0 -> 180 exactly as before, purely for the visual "turning" look. A React
+   state flip (`showBack`) swaps which content is rendered, timed to the
+   animation's exact midpoint — the instant the card is edge-on and, thanks to
+   `perspective`, visually collapsed to zero width. The swap is invisible
+   regardless of how any browser handles backface-visibility, because there
+   is nothing on screen to see it happen to. Once swapped, the back's own
+   local rotateY(180deg) combines with the wrapper's still-turning rotateY
+   (now past 90deg) so it un-rotates to identity exactly as the turn
+   completes, arriving right-way-round rather than mirrored.
 
    The tap is also what unlocks audio: browsers refuse to autoplay sound until
    a real gesture, so App starts the music off this same interaction. */
 export default function EnvelopeIntro({ onComplete }) {
   const [stage, setStage] = useState('idle') // idle -> opening -> flapBack
+  const [revealed, setRevealed] = useState(false) // wrapper has started its turn
+  const [showBack, setShowBack] = useState(false) // which content is mounted
   const timers = useRef([])
 
-  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+  useEffect(() => {
+    const midpointMs = FLIP_DELAY_MS + (FLIP_DURATION_S * 1000) / 2
+    timers.current.push(
+      setTimeout(() => setRevealed(true), FLIP_DELAY_MS),
+      setTimeout(() => setShowBack(true), midpointMs)
+    )
+    return () => timers.current.forEach(clearTimeout)
+  }, [])
 
   const handleTap = useCallback(() => {
-    if (stage !== 'idle') return // ignore repeat taps mid-animation
+    if (!showBack || stage !== 'idle') return // ignore taps before the flip, or mid-animation
     setStage('opening')
     const after = (ms, fn) => timers.current.push(setTimeout(fn, ms))
     // Once the flap passes vertical it should paint behind the envelope.
@@ -31,15 +76,15 @@ export default function EnvelopeIntro({ onComplete }) {
       }
       onComplete()
     })
-  }, [stage, onComplete])
+  }, [showBack, stage, onComplete])
 
   const opening = stage !== 'idle'
-
-  const paper = 'linear-gradient(150deg, #faf0dd 0%, #f0dfc0 55%, #e6d0aa 100%)'
-  const paperDark = 'linear-gradient(150deg, #f0dfc0 0%, #e4cca4 60%, #d8bc8e 100%)'
-  // The flap must not share the front's gradient — same fill on both and the
-  // envelope flattens into a plain cream rectangle.
-  const paperFlap = 'linear-gradient(168deg, #fdf7ea 0%, #f5e7cd 58%, #ecdab6 100%)'
+  // Once a tap is accepted, `opening` is permanently true for the rest of
+  // this component's life (handleTap only ever moves `stage` forward, never
+  // back to 'idle'). OR-ing it in here is a belt-and-braces guarantee: the
+  // rendered face can never fall back to the front once a guest has
+  // genuinely opened the envelope, independent of `showBack` specifically.
+  const displayBack = showBack || opening
 
   return (
     <motion.div
@@ -64,7 +109,7 @@ export default function EnvelopeIntro({ onComplete }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        cursor: 'pointer',
+        cursor: displayBack ? 'pointer' : 'default',
         overflow: 'hidden',
         background:
           'radial-gradient(120% 90% at 50% 38%, #5d1528 0%, #3a0d1a 45%, #240710 100%)',
@@ -97,143 +142,44 @@ export default function EnvelopeIntro({ onComplete }) {
           zIndex: 2,
         }}
       >
-        {/* back panel */}
+        {/* This is the piece that visually turns. Only one face is ever
+            mounted inside it — see the file header for why. A native CSS
+            transition drives the rotation; framer-motion's `animate` prop
+            would work just as well here, this is just one less thing routed
+            through it. */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: paper,
-            borderRadius: 4,
-            boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
-          }}
-        />
-
-        {/* the card, tucked inside, rising out */}
-        <motion.div
-          initial={{ y: 0 }}
-          animate={opening ? { y: '-58%' } : { y: 0 }}
-          transition={{ duration: 1.1, ease: EASE_SOFT, delay: 1.0 }}
-          style={{
-            position: 'absolute',
-            left: '5%',
-            width: '90%',
-            height: '92%',
-            bottom: '5%',
-            background: 'linear-gradient(165deg, #fffaf2 0%, #fdf4e6 100%)',
-            border: '1px solid rgba(201,148,42,0.45)',
-            borderRadius: 3,
-            zIndex: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            paddingTop: '11%',
-            boxShadow: '0 -6px 22px rgba(74,15,32,0.14)',
+            transform: `rotateY(${revealed || opening ? 180 : 0}deg)`,
+            transition: `transform ${FLIP_DURATION_S}s cubic-bezier(${EASE.join(',')})`,
           }}
         >
-          <div className="label" style={{ fontSize: 8.5, color: 'var(--gold-deep)' }}>
-            You Are Invited
-          </div>
-          <div className="script" style={{ fontSize: 25, color: 'var(--royal)', marginTop: 7 }}>
-            {couple.initials.left} &amp; {couple.initials.right}
-          </div>
-        </motion.div>
-
-        {/* Front face. Deliberately a full rectangle: clipping it into a V
-            leaves the card showing through as two bright wings on either side
-            of the flap. A real envelope is a flat front with the flap laid
-            over it — the flap's own edges supply the V. */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: paperDark,
-            zIndex: 3,
-            borderRadius: 4,
-          }}
-        />
-
-        {/* top flap */}
-        <motion.div
-          initial={{ rotateX: 0 }}
-          animate={opening ? { rotateX: -172 } : { rotateX: 0 }}
-          transition={{ duration: 1.0, ease: EASE, delay: 0.34 }}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '64%',
-            background: paperFlap,
-            clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
-            transformOrigin: 'top center',
-            transformStyle: 'preserve-3d',
-            zIndex: stage === 'flapBack' ? 1 : 5,
-            filter: 'drop-shadow(0 4px 5px rgba(74,15,32,0.34))',
-          }}
-        >
-          <svg
-            viewBox="0 0 300 128"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-          >
-            <path
-              d="M0 0 L150 128 L300 0"
-              fill="none"
-              stroke="rgba(201,148,42,0.6)"
-              strokeWidth="2.5"
-              vectorEffect="non-scaling-stroke"
-            />
-          </svg>
-        </motion.div>
-
-        {/* wax seal, pressed onto the flap's point */}
-        <motion.div
-          initial={{ scale: 1, opacity: 1 }}
-          animate={opening ? { scale: 1.45, opacity: 0, rotate: 14 } : { scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, ease: EASE }}
-          style={{
-            position: 'absolute',
-            top: '62%',
-            left: '50%',
-            width: 58,
-            height: 58,
-            marginLeft: -29,
-            marginTop: -29,
-            borderRadius: '50%',
-            zIndex: 6,
-            background:
-              'radial-gradient(circle at 34% 30%, #8c2440 0%, #5d1528 55%, #3d0c18 100%)',
-            border: '1.5px solid rgba(242,221,171,0.65)',
-            boxShadow:
-              '0 6px 16px rgba(0,0,0,0.45), inset 0 2px 6px rgba(255,220,160,0.28)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <span
-            className="script"
+          <div
             style={{
-              fontSize: 20,
-              color: 'var(--gold-light)',
-              lineHeight: 1,
-              paddingBottom: 2,
+              position: 'absolute',
+              inset: 0,
+              // Once swapped to the back, this local rotateY(180deg) combines
+              // with the wrapper's own (by then past 90deg and heading to
+              // 180deg) so the content un-rotates to identity exactly as the
+              // turn finishes, rather than arriving mirrored.
+              transform: displayBack ? 'rotateY(180deg)' : 'none',
             }}
           >
-            {couple.initials.left}
-            <span style={{ fontSize: 13, opacity: 0.85 }}>&amp;</span>
-            {couple.initials.right}
-          </span>
-        </motion.div>
+            {displayBack ? (
+              <EnvelopeBackFace stage={stage} opening={opening} />
+            ) : (
+              <EnvelopeFrontFace />
+            )}
+          </div>
+        </div>
       </div>
 
       {/* ---- Tap prompt ---- */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: opening ? 0 : 1 }}
-        transition={{ duration: 0.8, delay: opening ? 0 : 1.1 }}
+        animate={{ opacity: displayBack && !opening ? 1 : 0 }}
+        transition={{ duration: 0.8, delay: displayBack && !opening ? 0.3 : 0 }}
         style={{ marginTop: 40, textAlign: 'center', position: 'relative', zIndex: 2 }}
       >
         <motion.div
@@ -246,6 +192,151 @@ export default function EnvelopeIntro({ onComplete }) {
         </motion.div>
       </motion.div>
     </motion.div>
+  )
+}
+
+/* The envelope's back: flap, wax seal, the card tucked inside — unchanged
+   from before the front/flip was added, just extracted so it can be swapped
+   in as a single unit. */
+function EnvelopeBackFace({ stage, opening }) {
+  const paper = 'linear-gradient(150deg, #faf0dd 0%, #f0dfc0 55%, #e6d0aa 100%)'
+  const paperDark = 'linear-gradient(150deg, #f0dfc0 0%, #e4cca4 60%, #d8bc8e 100%)'
+  // The flap must not share the front's gradient — same fill on both and the
+  // envelope flattens into a plain cream rectangle.
+  const paperFlap = 'linear-gradient(168deg, #fdf7ea 0%, #f5e7cd 58%, #ecdab6 100%)'
+
+  return (
+    <>
+      {/* back panel */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: paper,
+          borderRadius: 4,
+          boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
+        }}
+      />
+
+      {/* the card, tucked inside, rising out */}
+      <motion.div
+        initial={{ y: 0 }}
+        animate={opening ? { y: '-58%' } : { y: 0 }}
+        transition={{ duration: 1.1, ease: EASE_SOFT, delay: 1.0 }}
+        style={{
+          position: 'absolute',
+          left: '5%',
+          width: '90%',
+          height: '92%',
+          bottom: '5%',
+          background: 'linear-gradient(165deg, #fffaf2 0%, #fdf4e6 100%)',
+          border: '1px solid rgba(201,148,42,0.45)',
+          borderRadius: 3,
+          zIndex: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          paddingTop: '11%',
+          boxShadow: '0 -6px 22px rgba(74,15,32,0.14)',
+        }}
+      >
+        <div className="label" style={{ fontSize: 8.5, color: 'var(--gold-deep)' }}>
+          You Are Invited
+        </div>
+        <div className="script" style={{ fontSize: 25, color: 'var(--royal)', marginTop: 7 }}>
+          {couple.initials.left} &amp; {couple.initials.right}
+        </div>
+      </motion.div>
+
+      {/* Front face. Deliberately a full rectangle: clipping it into a V
+          leaves the card showing through as two bright wings on either side
+          of the flap. A real envelope is a flat front with the flap laid
+          over it — the flap's own edges supply the V. */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: paperDark,
+          zIndex: 3,
+          borderRadius: 4,
+        }}
+      />
+
+      {/* top flap */}
+      <motion.div
+        initial={{ rotateX: 0 }}
+        animate={opening ? { rotateX: -172 } : { rotateX: 0 }}
+        transition={{ duration: 1.0, ease: EASE, delay: 0.34 }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '64%',
+          background: paperFlap,
+          clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
+          transformOrigin: 'top center',
+          transformStyle: 'preserve-3d',
+          zIndex: stage === 'flapBack' ? 1 : 5,
+          filter: 'drop-shadow(0 4px 5px rgba(74,15,32,0.34))',
+        }}
+      >
+        <svg
+          viewBox="0 0 300 128"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        >
+          <path
+            d="M0 0 L150 128 L300 0"
+            fill="none"
+            stroke="rgba(201,148,42,0.6)"
+            strokeWidth="2.5"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </motion.div>
+
+      {/* wax seal, pressed onto the flap's point */}
+      <motion.div
+        initial={{ scale: 1, opacity: 1 }}
+        animate={opening ? { scale: 1.45, opacity: 0, rotate: 14 } : { scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, ease: EASE }}
+        style={{
+          position: 'absolute',
+          top: '62%',
+          left: '50%',
+          width: 58,
+          height: 58,
+          marginLeft: -29,
+          marginTop: -29,
+          borderRadius: '50%',
+          zIndex: 6,
+          background:
+            'radial-gradient(circle at 34% 30%, #8c2440 0%, #5d1528 55%, #3d0c18 100%)',
+          border: '1.5px solid rgba(242,221,171,0.65)',
+          boxShadow: '0 6px 16px rgba(0,0,0,0.45), inset 0 2px 6px rgba(255,220,160,0.28)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <span
+          className="script"
+          style={{
+            fontSize: 20,
+            color: 'var(--gold-light)',
+            lineHeight: 1,
+            paddingBottom: 2,
+          }}
+        >
+          {couple.initials.left}
+          <span style={{ fontSize: 13, opacity: 0.85 }}>&amp;</span>
+          {couple.initials.right}
+        </span>
+      </motion.div>
+    </>
   )
 }
 
