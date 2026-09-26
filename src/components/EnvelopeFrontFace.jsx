@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { EASE } from '../animations'
-import { Om, Couple } from './Motifs'
+import { Om } from './Motifs'
 
 // A real illustrated Ganesha (gold line-art on transparent PNG) rather than
 // a hand-drawn SVG — a flat vector approximation never read as convincingly
@@ -40,8 +40,8 @@ export default function EnvelopeFrontFace() {
 
       {/* The customary opening line printed above Ganesha on a Hindu
           invitation: "|| Shree Ganeshaya Namah ||" — salutations to Ganesha.
-          Sized down from the first pass to make room for the couple
-          illustration below — this landscape box is tight on height. */}
+          Sized down from the first pass to make room for the couple photo
+          below — this landscape box is tight on height. */}
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -73,8 +73,8 @@ export default function EnvelopeFrontFace() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: EASE, delay: 0.46 }}
         style={{
-          width: 46,
-          height: 46,
+          width: 44,
+          height: 44,
           objectFit: 'contain',
           filter: 'drop-shadow(0 2px 3px rgba(74,15,32,0.28))',
         }}
@@ -86,7 +86,7 @@ export default function EnvelopeFrontFace() {
         transition={{ duration: 0.8, ease: EASE, delay: 0.68 }}
         className="devanagari"
         style={{
-          fontSize: 14,
+          fontSize: 13.5,
           fontWeight: 600,
           color: 'var(--royal)',
           marginTop: 1,
@@ -95,15 +95,37 @@ export default function EnvelopeFrontFace() {
         शुभ विवाह
       </motion.div>
 
-      {/* The illustrated couple — see Motifs.jsx for why this is a flat
-          silhouette rather than an attempt at a detailed illustration. */}
+      {/* The couple, a real photo rather than an illustration — same reasoning
+          as Ganesha above: an actual photograph reads far better at this size
+          than a drawn approximation. Reuses public/img/hero.jpg (already
+          cropped so their faces sit in its upper third) rather than a
+          separate asset. */}
       <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: EASE, delay: 0.85 }}
-        style={{ marginTop: 2 }}
+        style={{
+          width: 52,
+          height: 52,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          marginTop: 2,
+          border: '2px solid var(--gold)',
+          boxShadow: '0 0 0 3px #fdf7ea, 0 3px 6px rgba(74,15,32,0.35)',
+        }}
       >
-        <Couple width={78} />
+        <img
+          src="/img/hero.jpg"
+          alt=""
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            // Their faces sit around 45-60% down this frame, not near the
+            // top — the tall stone arch behind them fills the upper half.
+            objectPosition: '50% 58%',
+          }}
+        />
       </motion.div>
     </div>
   )
