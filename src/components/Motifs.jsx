@@ -236,3 +236,39 @@ export function Ganesha({ size = 64, color = 'var(--royal)' }) {
     </svg>
   )
 }
+
+/* A couple in Indian wedding attire, flat silhouette style — the sherwani's
+   long coat on one side, the lehenga's bell skirt and draped dupatta on the
+   other, hands joined between them. Deliberately no facial detail: unlike
+   Ganesha, a generic couple illustration has no single "correct" form to
+   fall short of, and a plain silhouette reads cleanly at small sizes where
+   detailed faces would just look muddy. Two tones only — a solid body fill
+   and a thin gold trim — matching this file's other motifs. */
+export function Couple({ width = 120, color = 'var(--royal)', trim = 'var(--gold)' }) {
+  const height = (width * 96) / 140
+  return (
+    <svg width={width} height={height} viewBox="0 0 140 96" fill="none" aria-hidden="true">
+      {/* joined hands, drawn first so both figures overlap it cleanly */}
+      <rect x="58" y="54" width="14" height="10" rx="5" fill={color} />
+
+      <g fill={color}>
+        {/* ---- groom: head, then the sherwani's long coat ---- */}
+        <circle cx="45" cy="14" r="9" />
+        <path d="M33 26 Q33 21 38 21 L52 21 Q57 21 57 26 L61 88 Q61 93 55 93 L35 93 Q29 93 29 88 Z" />
+
+        {/* ---- bride: dupatta draped behind, head, then the lehenga skirt ---- */}
+        <path d="M80 9 Q71 22 75 44 Q77 64 71 90 Q80 95 88 91 Q85 62 84 36 Q84 18 88 6 Z" opacity="0.88" />
+        <circle cx="95" cy="14" r="9" />
+        <path d="M80 26 Q80 21 85 21 L105 21 Q110 21 110 26 L125 88 Q125 94 118 94 L71 94 Q64 94 64 88 Z" />
+      </g>
+
+      {/* gold trim: sherwani placket, lehenga hem, dupatta edge, bindi */}
+      <g stroke={trim} strokeWidth="1.3" fill="none" strokeLinecap="round">
+        <path d="M45 23 L45 90" />
+        <path d="M68 89 L121 89" />
+        <path d="M79 43 Q81 63 77 88" opacity="0.8" />
+      </g>
+      <circle cx="95" cy="9.5" r="1.6" fill={trim} />
+    </svg>
+  )
+}
