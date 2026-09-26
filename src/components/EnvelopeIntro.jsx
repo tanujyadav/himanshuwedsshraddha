@@ -7,7 +7,7 @@ import EnvelopeFrontFace from './EnvelopeFrontFace'
 // How long the wrapper's turn itself takes, and how long the front sits on
 // screen before it starts. Both the animation and the content-swap timer
 // below are built from these two numbers so they can't drift out of sync.
-const FLIP_DELAY_MS = 1700
+const FLIP_DELAY_MS = 3700
 const FLIP_DURATION_S = 1.1
 
 /* Tap-to-open envelope.
