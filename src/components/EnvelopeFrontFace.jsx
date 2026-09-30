@@ -39,16 +39,14 @@ export default function EnvelopeFrontFace() {
       <FloralCorner corner="br" />
 
       {/* The customary opening line printed above Ganesha on a Hindu
-          invitation: "|| Shree Ganeshaya Namah ||" — salutations to Ganesha.
-          Sized down from the first pass to make room for the couple photo
-          below — this landscape box is tight on height. */}
+          invitation: "|| Shree Ganeshaya Namah ||" — salutations to Ganesha. */}
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
         className="devanagari"
         style={{
-          fontSize: 10.5,
+          fontSize: 12,
           fontWeight: 500,
           color: 'var(--gold-deep)',
           letterSpacing: '0.02em',
@@ -62,7 +60,7 @@ export default function EnvelopeFrontFace() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: EASE, delay: 0.28 }}
       >
-        <Om size={14} color="var(--gold-deep)" />
+        <Om size={17} color="var(--gold-deep)" />
       </motion.div>
 
       <motion.img
@@ -73,8 +71,8 @@ export default function EnvelopeFrontFace() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: EASE, delay: 0.46 }}
         style={{
-          width: 44,
-          height: 44,
+          width: 64,
+          height: 64,
           objectFit: 'contain',
           filter: 'drop-shadow(0 2px 3px rgba(74,15,32,0.28))',
         }}
@@ -86,7 +84,7 @@ export default function EnvelopeFrontFace() {
         transition={{ duration: 0.8, ease: EASE, delay: 0.68 }}
         className="devanagari"
         style={{
-          fontSize: 13.5,
+          fontSize: 17,
           fontWeight: 600,
           color: 'var(--royal)',
           marginTop: 1,
@@ -95,37 +93,14 @@ export default function EnvelopeFrontFace() {
         शुभ विवाह
       </motion.div>
 
-      {/* The couple, a real photo rather than an illustration — same reasoning
-          as Ganesha above: an actual photograph reads far better at this size
-          than a drawn approximation. Reuses public/img/hero.jpg (already
-          cropped so their faces sit in its upper third) rather than a
-          separate asset. */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: EASE, delay: 0.85 }}
-        style={{
-          width: 52,
-          height: 52,
-          borderRadius: '50%',
-          overflow: 'hidden',
-          marginTop: 2,
-          border: '2px solid var(--gold)',
-          boxShadow: '0 0 0 3px #fdf7ea, 0 3px 6px rgba(74,15,32,0.35)',
-        }}
+        className="label"
+        style={{ fontSize: 7.5, color: 'var(--gold-deep)', letterSpacing: '0.26em' }}
       >
-        <img
-          src="/img/hero.jpg"
-          alt=""
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            // Their faces sit around 45-60% down this frame, not near the
-            // top — the tall stone arch behind them fills the upper half.
-            objectPosition: '50% 58%',
-          }}
-        />
+        You Are Cordially Invited
       </motion.div>
     </div>
   )
