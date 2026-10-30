@@ -79,13 +79,13 @@ export function Mandala({ size = 330, color = 'var(--gold)', opacity = 0.07 }) {
 }
 
 /* Thin gold brackets at the four corners — the printed-card frame. */
-export function CornerBrackets({ inset = 11, len = 26, color = 'var(--gold)' }) {
+export function CornerBrackets({ inset = 11, len = 26, color = 'var(--gold)', sides = 'all' }) {
   const corners = [
     { top: inset, left: inset, rotate: 0 },
     { top: inset, right: inset, rotate: 90 },
     { bottom: inset, right: inset, rotate: 180 },
     { bottom: inset, left: inset, rotate: 270 },
-  ]
+  ].filter((c) => sides === 'all' || c.bottom !== undefined)
   return (
     <>
       {corners.map((c, i) => {

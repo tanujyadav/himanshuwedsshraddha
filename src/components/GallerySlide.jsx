@@ -15,6 +15,12 @@ const FOCAL = {
   'gallery-bride': '50% 45%',
   'gallery-groom': '50% 48%',
   'gallery-hands': '50% 50%',
+  'gallery-moment': '50% 50%',
+  'gallery-gesture': '50% 50%',
+  'gallery-twirl': '50% 50%',
+  'gallery-rings': '50% 50%',
+  'gallery-mehendi': '50% 50%',
+  'gallery-lawn': '50% 50%',
 }
 
 /* A photo interlude between the ceremonies and the closing note.
@@ -26,11 +32,20 @@ const FOCAL = {
 export default function GallerySlide() {
   const portraits = gallery.filter((g) => !g.wide)
   const [lead, ...restPortraits] = portraits
-  const pair = restPortraits.slice(0, 2)
+  const pairs = []
+  for (let i = 0; i < restPortraits.length; i += 2) pairs.push(restPortraits.slice(i, i + 2))
   const bands = gallery.filter((g) => g.wide)
 
   return (
-    <section style={{ background: 'var(--cream-warm)', padding: '62px var(--page-padding-x) 66px' }}>
+    <section
+      style={{
+        // A soft spotlight on the warm ivory, like prints laid out on a table.
+        background:
+          'radial-gradient(90% 50% at 50% 35%, #fcf3e6 0%, var(--cream-warm) 70%, #f1e0cb 100%)',
+        padding: '62px calc(var(--page-padding-x) + 4px) 72px',
+        overflow: 'hidden',
+      }}
+    >
       <div style={{ textAlign: 'center', marginBottom: 30 }}>
         <Reveal>
           <div className="label">A Few Moments</div>
@@ -47,26 +62,39 @@ export default function GallerySlide() {
       </div>
 
       <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={inView}>
-        {lead ? <Frame item={lead} ratio="2 / 3" /> : null}
+        {lead ? <Frame item={lead} ratio="2 / 3" tilt={-1.6} /> : null}
 
-        {pair.length ? (
-          <div
+        {/* Pairs alternate which side leans out, so the stack reads as
+            prints scattered by hand rather than a grid. */}
+        {pairs.map((pair, row) => (
+          <motion.div
+            key={pair[0].key}
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={inView}
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
-              gap: 12,
-              marginTop: 12,
+              gap: 14,
+              marginTop: 22,
             }}
           >
-            {pair.map((item) => (
-              <Frame key={item.key} item={item} ratio="2 / 3" />
+            {pair.map((item, i) => (
+              <Frame
+                key={item.key}
+                item={item}
+                ratio="2 / 3"
+                tilt={(i + row) % 2 ? 3 : -2.5}
+                small
+              />
             ))}
-          </div>
-        ) : null}
+          </motion.div>
+        ))}
 
         {bands.map((item) => (
-          <div key={item.key} style={{ marginTop: 12 }}>
-            <Frame item={item} ratio="3 / 2" />
+          <div key={item.key} style={{ marginTop: 22 }}>
+            <Frame item={item} ratio="3 / 2" tilt={1.2} />
           </div>
         ))}
       </motion.div>
@@ -74,18 +102,42 @@ export default function GallerySlide() {
   )
 }
 
-function Frame({ item, ratio }) {
+/* A tilted polaroid held on with a strip of gold washi tape. The whole print
+   rotates, so the photo inside is never cropped by the tilt. A tap or hover
+   straightens it. */
+function Frame({ item, ratio, tilt = 0, small = false }) {
+  const pad = small ? 7 : 11
   return (
-    <motion.figure variants={scaleIn} style={{ margin: 0 }}>
-      <div
+    <motion.figure
+      variants={scaleIn}
+      whileHover={{ rotate: 0, scale: 1.02 }}
+      whileTap={{ rotate: 0, scale: 1.02 }}
+      style={{
+        margin: 0,
+        rotate: tilt,
+        position: 'relative',
+        background: '#fffdf9',
+        padding: `${pad}px ${pad}px 0`,
+        boxShadow: '0 14px 30px rgba(74,15,32,0.18), 0 2px 6px rgba(74,15,32,0.1)',
+      }}
+    >
+      <span
+        aria-hidden="true"
         style={{
-          position: 'relative',
-          aspectRatio: ratio,
-          overflow: 'hidden',
-          borderRadius: 3,
-          border: '1px solid rgba(201,148,42,0.28)',
+          position: 'absolute',
+          top: -9,
+          left: '50%',
+          width: small ? 52 : 78,
+          height: 20,
+          marginLeft: small ? -26 : -39,
+          transform: `rotate(${-tilt * 1.8}deg)`,
+          background:
+            'repeating-linear-gradient(45deg, rgba(242,221,171,0.85) 0 6px, rgba(201,148,42,0.55) 6px 8px)',
+          boxShadow: '0 1px 3px rgba(74,15,32,0.15)',
+          zIndex: 2,
         }}
-      >
+      />
+      <div style={{ position: 'relative', aspectRatio: ratio, overflow: 'hidden' }}>
         <Photo
           name={item.src}
           alt={item.caption}
@@ -94,8 +146,13 @@ function Frame({ item, ratio }) {
       </div>
       <Reveal variants={fadeUp} delay={0.1}>
         <figcaption
-          className="label"
-          style={{ textAlign: 'center', marginTop: 10, fontSize: 8.5 }}
+          className="script"
+          style={{
+            textAlign: 'center',
+            fontSize: small ? 22 : 30,
+            color: 'var(--royal-soft)',
+            padding: small ? '2px 0 4px' : '4px 0 8px',
+          }}
         >
           {item.caption}
         </figcaption>

@@ -8,6 +8,7 @@ import CountdownSlide from './components/CountdownSlide'
 import EventSlide from './components/EventSlide'
 import GallerySlide from './components/GallerySlide'
 import FinalSlide from './components/FinalSlide'
+import { PetalShower } from './components/Festive'
 
 import { events, music } from './data/wedding'
 
@@ -124,6 +125,8 @@ export default function App() {
           {muted ? <MutedIcon /> : <SoundIcon />}
         </motion.button>
       ) : null}
+
+      {opened ? <PetalShower /> : null}
 
       {!opened ? <EnvelopeIntro onComplete={() => setOpened(true)} /> : null}
 

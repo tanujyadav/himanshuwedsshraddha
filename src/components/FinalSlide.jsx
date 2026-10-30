@@ -5,6 +5,17 @@ import Reveal from './Reveal'
 import SplitText from './SplitText'
 import { blurIn, fadeUp, inView } from '../animations'
 import { closing, couple, invitation } from '../data/wedding'
+import { Diya, Sparkles } from './Festive'
+
+const SPARKLES = [
+  { l: 12, t: 14, s: 14, dl: 0 },
+  { l: 82, t: 9, s: 10, dl: 1.1 },
+  { l: 30, t: 33, s: 9, dl: 2 },
+  { l: 88, t: 38, s: 13, dl: 0.6 },
+  { l: 8, t: 52, s: 10, dl: 1.6 },
+  { l: 64, t: 22, s: 8, dl: 2.6 },
+  { l: 50, t: 6, s: 11, dl: 0.3 },
+]
 
 /* Closing screen over the overhead staircase frame — the moodiest photograph
    of the set, which suits a dark sign-off.
@@ -38,6 +49,7 @@ export default function FinalSlide() {
             'linear-gradient(180deg, rgba(29,6,13,0.55) 0%, rgba(29,6,13,0.34) 26%, rgba(29,6,13,0.68) 52%, rgba(29,6,13,0.92) 78%, rgba(29,6,13,0.96) 100%)',
         }}
       />
+      <Sparkles items={SPARKLES} />
 
       <div
         style={{
@@ -104,6 +116,16 @@ export default function FinalSlide() {
             {couple.groom.name} &amp; {couple.bride.name}
           </div>
         </motion.div>
+
+        <Reveal variants={fadeUp} delay={0.1}>
+          <div
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 22, marginTop: 26 }}
+          >
+            <Diya size={34} delay={0.3} />
+            <Diya size={46} />
+            <Diya size={34} delay={0.9} />
+          </div>
+        </Reveal>
 
 
         {couple.hashtag ? (

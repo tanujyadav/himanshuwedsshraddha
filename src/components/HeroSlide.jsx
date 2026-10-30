@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import Photo from './Photo'
 import Ornament from './Ornament'
 import { Mandala, CornerBrackets, AndRule } from './Motifs'
+import { Toran } from './Festive'
 import { EASE, blurIn } from '../animations'
 import { couple, weddingDate, invitation } from '../data/wedding'
 
@@ -34,13 +35,25 @@ export default function HeroSlide() {
         paddingBottom: 30,
       }}
     >
-      <CornerBrackets />
+      {/* Bottom brackets only — the toran takes the top edge. */}
+      <CornerBrackets sides="bottom" />
+
+      {/* Marigold toran strung across the doorway, the way a venue entrance
+          is dressed. Absolute so it overlaps the arch's dome slightly. */}
+      <motion.div
+        initial={{ opacity: 0, y: -24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
+        style={{ position: 'absolute', top: 0, left: -6, right: -6, zIndex: 4, pointerEvents: 'none' }}
+      >
+        <Toran height={86} />
+      </motion.div>
 
       {/* ---- Ganesha, then the arched photograph ----
           The same illustrated image used on the envelope front
           (public/img/ganesha.png), small, in place of the abstract diamond
           crest this spot used to hold. */}
-      <div style={{ padding: '14px var(--page-padding-x) 0', position: 'relative', zIndex: 2 }}>
+      <div style={{ padding: '62px var(--page-padding-x) 0', position: 'relative', zIndex: 2 }}>
         <motion.div
           initial={{ opacity: 0, y: -10, scale: 0.7 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -63,7 +76,25 @@ export default function HeroSlide() {
             height cap wins and the arch simply gets smaller, keeping the names
             above the fold. It never crops — aspectRatio holds, so the frame
             shrinks rather than being clipped. */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
+        {/* Slowly turning mandala halo behind the arch. */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: 0,
+            height: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div className="spin-slow" style={{ flex: 'none' }}>
+            <Mandala size={520} opacity={0.16} />
+          </div>
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 26, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -71,7 +102,7 @@ export default function HeroSlide() {
           style={{
             position: 'relative',
             aspectRatio: '25 / 32',
-            height: 'min(50svh, 470px)',
+            height: 'min(46svh, 440px)',
             maxWidth: '100%',
             // Dome top, barely-rounded base — the mandap arch.
             borderRadius: '48% 48% 6px 6px / 31% 31% 1% 1%',

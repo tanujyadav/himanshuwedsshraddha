@@ -90,15 +90,12 @@ export default function CountdownSlide() {
             whileInView="visible"
             viewport={inView}
             className="frost"
-            style={{ display: 'flex', alignItems: 'center', padding: '18px 6px' }}
+            style={{ display: 'flex', alignItems: 'center', padding: '16px 4px 14px', gap: 2 }}
           >
             <Unit value={days} label="Days" />
-            <Divider />
-            <Unit value={hours} label="Hours" />
-            <Divider />
-            <Unit value={minutes} label="Minutes" />
-            <Divider />
-            <Unit value={seconds} label="Seconds" />
+            <Unit value={hours} label="Hours" max={24} />
+            <Unit value={minutes} label="Minutes" max={60} />
+            <Unit value={seconds} label="Seconds" max={60} />
           </motion.div>
 
           <Reveal variants={fadeUp} delay={0.2}>
@@ -121,14 +118,40 @@ export default function CountdownSlide() {
   )
 }
 
-/* One countdown unit. Each new value slides up as the old one leaves, so the
-   seconds tick over instead of snapping. */
-function Unit({ value, label }) {
+/* One countdown unit inside a gold ring that empties as the unit runs down
+   (days has no natural maximum, so its ring stays full). Each new value
+   slides up as the old one leaves, so the seconds tick over instead of
+   snapping. */
+const RING_R = 29
+const RING_C = 2 * Math.PI * RING_R
+
+function Unit({ value, label, max }) {
   const shown = String(value ?? 0).padStart(2, '0')
+  const fraction = max ? (value ?? 0) / max : 1
 
   return (
-    <div style={{ flex: 1, minWidth: 0 }}>
-      <div style={{ position: 'relative', height: 42, overflow: 'hidden' }}>
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ position: 'relative', width: 66, height: 66, maxWidth: '100%' }}>
+      <svg
+        viewBox="0 0 66 66"
+        aria-hidden="true"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', transform: 'rotate(-90deg)' }}
+      >
+        <circle cx="33" cy="33" r={RING_R} fill="rgba(43,8,18,0.25)" stroke="rgba(242,221,171,0.18)" strokeWidth="2" />
+        <circle
+          cx="33"
+          cy="33"
+          r={RING_R}
+          fill="none"
+          stroke="var(--gold-light)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray={RING_C}
+          strokeDashoffset={RING_C * (1 - fraction)}
+          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+        />
+      </svg>
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', borderRadius: '50%' }}>
         <AnimatePresence initial={false}>
           <motion.div
             key={shown}
@@ -143,7 +166,7 @@ function Unit({ value, label }) {
               alignItems: 'center',
               justifyContent: 'center',
               fontFamily: 'var(--serif)',
-              fontSize: 33,
+              fontSize: 27,
               fontWeight: 400,
               color: 'var(--gold-light)',
               // Both values needed: the inline style replaces the global
@@ -155,26 +178,13 @@ function Unit({ value, label }) {
           </motion.div>
         </AnimatePresence>
       </div>
+      </div>
       <div
         className="label"
-        style={{ fontSize: 7.5, color: '#fdf8f0', opacity: 0.72, marginTop: 4 }}
+        style={{ fontSize: 7.5, color: '#fdf8f0', opacity: 0.72, marginTop: 8 }}
       >
         {label}
       </div>
     </div>
-  )
-}
-
-function Divider() {
-  return (
-    <span
-      aria-hidden="true"
-      style={{
-        width: 1,
-        height: 34,
-        background: 'rgba(242,221,171,0.3)',
-        flex: '0 0 1px',
-      }}
-    />
   )
 }

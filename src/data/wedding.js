@@ -77,12 +77,19 @@ export const events = [
 ];
 
 /* ---- Photo gallery strip -----------------------------------------------
-   The first entry is the large lead frame, the next two sit side by side,
-   and anything flagged `wide` renders as a full-width landscape band. */
+   The first entry is the large lead frame, the rest sit side by side in
+   pairs, and anything flagged `wide` renders as a full-width landscape band.
+   Every portrait file is 2:3 (1000x1500). */
 export const gallery = [
-  { key: "gallery-lead", src: "gallery-lead", caption: "Together" },
+  { key: "gallery-moment", src: "gallery-moment", caption: "Just Us" },
   { key: "gallery-bride", src: "gallery-bride", caption: "The Bride" },
   { key: "gallery-groom", src: "gallery-groom", caption: "The Groom" },
+  { key: "gallery-gesture", src: "gallery-gesture", caption: "Little Gestures" },
+  { key: "gallery-twirl", src: "gallery-twirl", caption: "A Twirl of Joy" },
+  { key: "gallery-rings", src: "gallery-rings", caption: "The Rings" },
+  { key: "gallery-mehendi", src: "gallery-mehendi", caption: "The Details" },
+  { key: "gallery-lead", src: "gallery-lead", caption: "Together" },
+  { key: "gallery-lawn", src: "gallery-lawn", caption: "Hand in Hand" },
   // {
   //   key: "gallery-hands",
   //   src: "gallery-hands",

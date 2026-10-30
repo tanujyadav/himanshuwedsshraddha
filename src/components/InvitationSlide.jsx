@@ -2,6 +2,8 @@ import { motion } from 'framer-motion'
 import SplitText from './SplitText'
 import Ornament from './Ornament'
 import Reveal from './Reveal'
+import { Mandala } from './Motifs'
+import { Diya } from './Festive'
 import { blurIn, fadeUp, inView } from '../animations'
 import { couple, invitation } from '../data/wedding'
 
@@ -12,11 +14,34 @@ export default function InvitationSlide() {
     <section
       style={{
         background: 'var(--cream)',
-        padding: '68px var(--page-padding-x) 74px',
+        padding: '52px calc(var(--page-padding-x) - 10px) 60px',
         textAlign: 'center',
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Faint mandalas peeking in from two corners. */}
+      <div aria-hidden="true" className="spin-slow" style={{ position: 'absolute', top: -120, right: -120 }}>
+        <Mandala size={260} opacity={0.09} />
+      </div>
+      <div aria-hidden="true" className="spin-slow" style={{ position: 'absolute', bottom: -120, left: -120 }}>
+        <Mandala size={260} opacity={0.09} />
+      </div>
+
+      {/* Jharokha: an arched window frame, double gold rule, holding the
+          whole formal wording like a printed card. */}
+      <div
+        style={{
+          position: 'relative',
+          border: '1px solid rgba(201,148,42,0.55)',
+          borderRadius: '170px 170px 14px 14px',
+          boxShadow:
+            '0 0 0 5px var(--cream), 0 0 0 6px rgba(201,148,42,0.3), 0 18px 40px rgba(74,15,32,0.08)',
+          background:
+            'radial-gradient(100% 50% at 50% 0%, rgba(242,221,171,0.28) 0%, rgba(253,248,240,0) 70%)',
+          padding: '44px 18px 40px',
+        }}
+      >
       {/* Same Ganesha + invocation printed on the envelope front and the
           hero arch, repeated here since this is the first formal page a
           guest reads. */}
@@ -143,16 +168,29 @@ export default function InvitationSlide() {
         style={{ margin: '0 auto', maxWidth: 312 }}
       />
 
-      {couple.hashtag ? (
-        <Reveal variants={fadeUp} delay={0.2}>
-          <div
-            className="label"
-            style={{ marginTop: 34, color: 'var(--gold)', letterSpacing: '0.2em' }}
-          >
-            {couple.hashtag}
-          </div>
-        </Reveal>
-      ) : null}
+      <Reveal variants={fadeUp} delay={0.15}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            gap: 14,
+            marginTop: 28,
+          }}
+        >
+          <Diya size={38} />
+          {couple.hashtag ? (
+            <div
+              className="label"
+              style={{ color: 'var(--gold)', letterSpacing: '0.16em', paddingBottom: 8 }}
+            >
+              {couple.hashtag}
+            </div>
+          ) : null}
+          <Diya size={38} delay={0.7} />
+        </div>
+      </Reveal>
+      </div>
     </section>
   )
 }
