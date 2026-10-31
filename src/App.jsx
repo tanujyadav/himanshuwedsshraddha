@@ -4,6 +4,7 @@ import { motion, useScroll, useSpring } from 'framer-motion'
 import EnvelopeIntro from './components/EnvelopeIntro'
 import HeroSlide from './components/HeroSlide'
 import InvitationSlide from './components/InvitationSlide'
+import LetterSlide from './components/LetterSlide'
 import CountdownSlide from './components/CountdownSlide'
 import EventSlide from './components/EventSlide'
 import GallerySlide from './components/GallerySlide'
@@ -27,7 +28,8 @@ export default function App() {
   const scaleY = useSpring(scrollYProgress, { stiffness: 120, damping: 30 })
 
   const audioRef = useRef(null)
-  const [muted, setMuted] = useState(false)
+  const userPaused = useRef(false)
+  const [playing, setPlaying] = useState(false)
   const [audioReady, setAudioReady] = useState(false)
 
   // Lock the page behind the envelope.
@@ -38,39 +40,68 @@ export default function App() {
     }
   }, [opened])
 
-  /* Start the music off the envelope tap. Browsers block autoplay until a
-     real gesture, so this is the only moment it can begin. If public/music.mp3
-     is missing, play() rejects and the control simply never appears. */
+  /* Start the music off the envelope tap, fading in over a few seconds rather
+     than cutting in. Browsers block autoplay until a real gesture: a guest
+     returning this session skips the envelope, so for them play() is refused
+     and the music instead starts on their first tap anywhere. If
+     public/music.mp3 is missing, the control simply never appears. */
   useEffect(() => {
     if (!opened || !music.enabled || audioRef.current) return
 
+    const target = music.volume ?? 0.3
     const audio = new Audio(music.src)
     audio.loop = true
-    audio.volume = music.volume ?? 0.3
-    const onError = () => setAudioReady(false)
-    audio.addEventListener('error', onError)
+    audio.volume = 0
     audioRef.current = audio
+    let fade = null
 
-    audio.play().then(
-      () => setAudioReady(true),
-      () => setAudioReady(false)
-    )
+    const start = () =>
+      audio.play().then(
+        () => {
+          setPlaying(true)
+          clearInterval(fade)
+          fade = setInterval(() => {
+            audio.volume = Math.min(target, audio.volume + target / 40)
+            if (audio.volume >= target) clearInterval(fade)
+          }, 100)
+        },
+        () => setPlaying(false)
+      )
+    const retry = () => {
+      if (audio.paused && !userPaused.current) start()
+    }
+    const onReady = () => setAudioReady(true)
+    const onError = () => setAudioReady(false)
+
+    audio.addEventListener('loadedmetadata', onReady)
+    audio.addEventListener('error', onError)
+    window.addEventListener('pointerdown', retry, { once: true })
+    start()
 
     return () => {
+      clearInterval(fade)
+      audio.removeEventListener('loadedmetadata', onReady)
       audio.removeEventListener('error', onError)
+      window.removeEventListener('pointerdown', retry)
       audio.pause()
       // Cleared so React's dev-mode remount re-creates and restarts it.
       audioRef.current = null
     }
   }, [opened])
 
-  const toggleMute = useCallback(() => {
+  const togglePlay = useCallback(() => {
     const audio = audioRef.current
     if (!audio) return
-    const next = !muted
-    audio.muted = next
-    setMuted(next)
-  }, [muted])
+    if (audio.paused) {
+      userPaused.current = false
+      audio.volume = music.volume ?? 0.3
+      audio.play().then(() => setPlaying(true), () => {})
+    } else {
+      userPaused.current = true
+      audio.pause()
+      setPlaying(false)
+    }
+  }, [])
 
   return (
     <>
@@ -94,14 +125,14 @@ export default function App() {
         }}
       />
 
-      {/* Mute toggle — only rendered once we know the track actually plays */}
+      {/* Play/pause — only rendered once we know the track exists */}
       {opened && audioReady ? (
         <motion.button
-          onClick={toggleMute}
+          onClick={togglePlay}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          aria-label={muted ? 'Unmute music' : 'Mute music'}
+          aria-label={playing ? 'Pause music' : 'Play music'}
           style={{
             position: 'fixed',
             top: 16,
@@ -122,7 +153,7 @@ export default function App() {
             padding: 0,
           }}
         >
-          {muted ? <MutedIcon /> : <SoundIcon />}
+          {playing ? <SoundIcon /> : <MutedIcon />}
         </motion.button>
       ) : null}
 
@@ -133,6 +164,7 @@ export default function App() {
       <main style={{ position: 'relative', zIndex: 2 }}>
         <HeroSlide />
         <InvitationSlide />
+        <LetterSlide />
         <CountdownSlide />
         {events.map((event, i) => (
           <EventSlide key={event.id} event={event} index={i} />

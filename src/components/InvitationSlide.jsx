@@ -3,7 +3,7 @@ import SplitText from './SplitText'
 import Ornament from './Ornament'
 import Reveal from './Reveal'
 import { Mandala } from './Motifs'
-import { Diya } from './Festive'
+import { Diya, Texture, Filigree, Bell } from './Festive'
 import { blurIn, fadeUp, inView } from '../animations'
 import { couple, invitation } from '../data/wedding'
 
@@ -18,8 +18,15 @@ export default function InvitationSlide() {
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden',
+        isolation: 'isolate',
       }}
     >
+      <Texture />
+
+      {/* Brass bells hanging either side of the arch's crown. */}
+      <Bell chain={34} style={{ position: 'absolute', top: 0, left: 30 }} />
+      <Bell chain={48} delay={-1.7} style={{ position: 'absolute', top: 0, right: 30 }} />
+
       {/* Faint mandalas peeking in from two corners. */}
       <div aria-hidden="true" className="spin-slow" style={{ position: 'absolute', top: -120, right: -120 }}>
         <Mandala size={260} opacity={0.09} />
@@ -73,8 +80,8 @@ export default function InvitationSlide() {
         <div className="label">{invitation.formalEyebrow}</div>
       </Reveal>
 
-      <div style={{ margin: '20px 0 26px' }}>
-        <Ornament width={128} />
+      <div style={{ margin: '18px 0 24px' }}>
+        <Filigree width={190} />
       </div>
 
       <SplitText

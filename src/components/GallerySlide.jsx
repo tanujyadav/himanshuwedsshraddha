@@ -1,26 +1,25 @@
 import { motion } from 'framer-motion'
 import Photo from './Photo'
-import Ornament from './Ornament'
 import Reveal from './Reveal'
 import SplitText from './SplitText'
 import { fadeUp, scaleIn, stagger, inView } from '../animations'
-import { gallery } from '../data/wedding'
+import { gallery, galleryIntro } from '../data/wedding'
+import { Texture, Filigree } from './Festive'
 
 /* Portrait frames are 2/3 — the same aspect as the files — so `cover` has
    nothing to crop and no one gets clipped. These focal points therefore do
    almost nothing today; they only matter if a frame ratio changes or a
    replacement photo has a different aspect. */
 const FOCAL = {
-  'gallery-lead': '50% 50%',
   'gallery-bride': '50% 45%',
   'gallery-groom': '50% 48%',
+  'gallery-lead': '50% 50%',
   'gallery-hands': '50% 50%',
-  'gallery-moment': '50% 50%',
   'gallery-gesture': '50% 50%',
-  'gallery-twirl': '50% 50%',
   'gallery-rings': '50% 50%',
   'gallery-mehendi': '50% 50%',
   'gallery-lawn': '50% 50%',
+  'gallery-flower': '50% 50%',
 }
 
 /* A photo interlude between the ceremonies and the closing note.
@@ -44,8 +43,11 @@ export default function GallerySlide() {
           'radial-gradient(90% 50% at 50% 35%, #fcf3e6 0%, var(--cream-warm) 70%, #f1e0cb 100%)',
         padding: '62px calc(var(--page-padding-x) + 4px) 72px',
         overflow: 'hidden',
+        position: 'relative',
+        isolation: 'isolate',
       }}
     >
+      <Texture />
       <div style={{ textAlign: 'center', marginBottom: 30 }}>
         <Reveal>
           <div className="label">A Few Moments</div>
@@ -58,7 +60,17 @@ export default function GallerySlide() {
           className="script shimmer"
           style={{ fontSize: 40, margin: '8px 0 16px' }}
         />
-        <Ornament width={110} />
+        <Filigree width={180} />
+        {galleryIntro ? (
+          <SplitText
+            tag="p"
+            text={galleryIntro}
+            by="word"
+            stagger={0.03}
+            className="body-text"
+            style={{ margin: '20px auto 0', maxWidth: 300, fontStyle: 'italic', fontSize: 15 }}
+          />
+        ) : null}
       </div>
 
       <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={inView}>
@@ -75,18 +87,19 @@ export default function GallerySlide() {
             viewport={inView}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
+              gridTemplateColumns: pair.length === 1 ? '1fr' : '1fr 1fr',
               gap: 14,
               marginTop: 22,
             }}
           >
+            {/* An odd one out at the end gets the full width, like the lead. */}
             {pair.map((item, i) => (
               <Frame
                 key={item.key}
                 item={item}
                 ratio="2 / 3"
-                tilt={(i + row) % 2 ? 3 : -2.5}
-                small
+                tilt={pair.length === 1 ? 1.4 : (i + row) % 2 ? 3 : -2.5}
+                small={pair.length > 1}
               />
             ))}
           </motion.div>

@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
 import Photo from './Photo'
-import Ornament from './Ornament'
 import Reveal from './Reveal'
 import SplitText from './SplitText'
+import { Texture, Filigree, PhotoCorners } from './Festive'
 import { blurIn, fadeUp, fadeLeft, fadeRight, stagger, inView, EASE } from '../animations'
+import { couple } from '../data/wedding'
 
 /* One ceremony: a clean photograph, then the wording and details on ivory.
 
@@ -27,10 +28,11 @@ export default function EventSlide({ event, index = 0 }) {
      Row leaves a stray border the moment a field is dropped. Any field left
      empty in wedding.js simply omits its row. */
   const rows = [
-    { label: 'Date', value: event.date },
-    { label: 'Time', value: event.time },
+    { label: 'Date', icon: CalendarIcon, value: event.date },
+    { label: 'Time', icon: ClockIcon, value: event.time },
     {
       label: 'Venue',
+      icon: PinIcon,
       value: event.venue ? (
         <>
           <span style={{ display: 'block', fontWeight: 500 }}>{event.venue}</span>
@@ -58,7 +60,8 @@ export default function EventSlide({ event, index = 0 }) {
     /^(\w+),\s*(\d{1,2})\s+(\w+)/.exec(event.date ?? '')?.map((s, i) => (i === 3 ? s.slice(0, 3) : s)) ?? []
 
   return (
-    <section style={{ background: 'var(--cream)' }}>
+    <section style={{ background: 'var(--cream)', position: 'relative', isolation: 'isolate' }}>
+      <Texture />
       {/* ---- Photograph, completely clean ---- */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -73,6 +76,7 @@ export default function EventSlide({ event, index = 0 }) {
         }}
       >
         <Photo name={event.photo} alt="" objectPosition="50% 50%" />
+        <PhotoCorners />
       </motion.div>
 
       {/* ---- Date medallion, straddling the photo's bottom edge ---- */}
@@ -82,6 +86,7 @@ export default function EventSlide({ event, index = 0 }) {
           whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
           viewport={inView}
           transition={{ duration: 0.9, ease: EASE, delay: 0.2 }}
+          className="glint"
           style={{
             position: 'relative',
             zIndex: 2,
@@ -134,7 +139,7 @@ export default function EventSlide({ event, index = 0 }) {
         </motion.div>
 
         <div style={{ margin: '12px 0 20px' }}>
-          <Ornament width={110} color={event.headingColor} />
+          <Filigree width={170} color={event.headingColor} />
         </div>
 
         <SplitText
@@ -182,6 +187,7 @@ export default function EventSlide({ event, index = 0 }) {
                     key={row.label}
                     variants={slideIn}
                     label={row.label}
+                    icon={row.icon}
                     value={row.value}
                     accent={event.headingColor}
                     last={i === rows.length - 1}
@@ -195,7 +201,17 @@ export default function EventSlide({ event, index = 0 }) {
                 style={{ margin: '0 22px', borderTop: '2px dashed rgba(201,148,42,0.4)' }}
               />
 
-              <div style={{ height: STUB_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 22px' }}>
+              <div
+                style={{
+                  height: STUB_HEIGHT,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 12,
+                  padding: '0 22px',
+                }}
+              >
                 <motion.a
                   href={event.mapsUrl}
                   target="_blank"
@@ -220,6 +236,27 @@ export default function EventSlide({ event, index = 0 }) {
                   <PinIcon />
                   Open in Google Maps
                 </motion.a>
+                {event.calendar ? (
+                  <a
+                    href={calendarUrl(event)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="label"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 7,
+                      fontSize: 8.5,
+                      color: event.headingColor,
+                      textDecoration: 'none',
+                      borderBottom: '1px solid rgba(201,148,42,0.5)',
+                      paddingBottom: 3,
+                    }}
+                  >
+                    <CalendarIcon />
+                    Add to Calendar
+                  </a>
+                ) : null}
               </div>
             </div>
           </div>
@@ -232,32 +269,53 @@ export default function EventSlide({ event, index = 0 }) {
 /* Half-circle notches either side of the perforation, STUB_HEIGHT above the
    bottom. Each gradient covers one half of the ticket, so they need no
    mask compositing. */
-const STUB_HEIGHT = 78
+const STUB_HEIGHT = 112
+
+/* Google Calendar "add event" link. Times in wedding.js are local IST, so
+   they're converted to UTC here (IST is a fixed +05:30, no DST). */
+function calendarUrl(event) {
+  const utc = (local) =>
+    new Date(`${local}:00+05:30`).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `${event.heading} — ${couple.groom.name} & ${couple.bride.name}`,
+    dates: `${utc(event.calendar.start)}/${utc(event.calendar.end)}`,
+    location: [event.venue, event.address].filter(Boolean).join(', '),
+    details: `${event.time}
+${event.mapsUrl}`,
+  })
+  return `https://calendar.google.com/calendar/render?${params}`
+}
+
 const TICKET_MASK =
   `radial-gradient(circle at 0 calc(100% - ${STUB_HEIGHT}px), #0000 11px, #000 11.5px) left / 51% 100% no-repeat, ` +
   `radial-gradient(circle at 100% calc(100% - ${STUB_HEIGHT}px), #0000 11px, #000 11.5px) right / 51% 100% no-repeat`
 
-function Row({ label, value, accent, variants, last = false }) {
+function Row({ label, icon: Icon, value, accent, variants, last = false }) {
   return (
     <motion.div
       variants={variants}
       style={{
         display: 'grid',
-        gridTemplateColumns: '88px 1fr',
-        gap: 14,
+        gridTemplateColumns: '80px 1fr',
+        gap: 10,
         alignItems: 'baseline',
         padding: '13px 0',
         borderBottom: last ? 'none' : '1px solid rgba(201,148,42,0.22)',
       }}
     >
-      <dt className="label" style={{ fontSize: 8.5, color: accent, opacity: 0.85 }}>
+      <dt
+        className="label"
+        style={{ fontSize: 8.5, color: accent, opacity: 0.85, display: 'flex', alignItems: 'center', gap: 7 }}
+      >
+        {Icon ? <Icon /> : null}
         {label}
       </dt>
       <dd
         style={{
           margin: 0,
           fontFamily: 'var(--serif)',
-          fontSize: 15.5,
+          fontSize: 15,
           color: 'var(--text-dark)',
           lineHeight: 1.5,
         }}
@@ -277,6 +335,24 @@ function PinIcon() {
         strokeWidth="1.8"
       />
       <circle cx="12" cy="10" r="2.4" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  )
+}
+
+function CalendarIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function ClockIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M12 7.5V12l3 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   )
 }

@@ -1,93 +1,10 @@
-/* Festive decorations borrowed from a real Indian wedding venue: the marigold
-   toran over the doorway, rose petals drifting down, and lit diyas. All inline
+/* Festive decorations borrowed from a real Indian wedding venue: rose petals
+   drifting down, lit diyas and brass bells. All inline
    SVG + CSS keyframes (see index.css) — no image assets, and every piece is
    aria-hidden since none of it carries meaning. */
 
-const SAG = 22
-const MARIGOLD = ['#f28c18', '#f7b928', '#e8640c']
-
-/* Points along a quadratic swag from (x0, y) to (x1, y), sagging by `sag`. */
-function swagPoints(x0, x1, y, sag, count) {
-  const cx = (x0 + x1) / 2
-  const cy = y + sag * 2
-  return Array.from({ length: count }, (_, i) => {
-    const t = (i + 0.5) / count
-    const u = 1 - t
-    return {
-      x: u * u * x0 + 2 * u * t * cx + t * t * x1,
-      y: u * u * y + 2 * u * t * cy + t * t * y,
-    }
-  })
-}
-
-function Marigold({ x, y, r = 5.4, color }) {
-  return (
-    <g>
-      <circle cx={x} cy={y} r={r} fill={color} />
-      <circle cx={x} cy={y} r={r * 0.62} fill="none" stroke="rgba(150,50,0,0.35)" strokeWidth="0.8" />
-      <circle cx={x - r * 0.3} cy={y - r * 0.3} r={r * 0.28} fill="rgba(255,240,190,0.55)" />
-    </g>
-  )
-}
-
-/* Marigold garland strung across the top of a section: three swags, with a
-   hanging strand of flowers and a bell at each join. The strands sway. */
-export function Toran({ height = 70 }) {
-  const W = 400
-  const joins = [0, 133, 267, 400]
-  const swags = joins.slice(0, -1).flatMap((x0, i) =>
-    swagPoints(x0, joins[i + 1], 6, SAG, 16).map((p, j) => ({ ...p, c: MARIGOLD[(i + j) % 3] }))
-  )
-  const leaves = Array.from({ length: 21 }, (_, i) => 10 + i * 19)
-
-  return (
-    <svg
-      viewBox={`0 0 ${W} 90`}
-      preserveAspectRatio="xMidYMin meet"
-      aria-hidden="true"
-      style={{ display: 'block', width: '100%', height, overflow: 'visible' }}
-    >
-      <defs>
-        <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#4f7a28" />
-          <stop offset="1" stopColor="#2f5a17" />
-        </linearGradient>
-      </defs>
-
-      {/* mango leaves along the top cord */}
-      {leaves.map((x, i) => (
-        <path
-          key={x}
-          d={`M${x} 2 Q${x + 6} 12 ${x} 22 Q${x - 6} 12 ${x} 2 Z`}
-          fill="url(#leaf)"
-          transform={`rotate(${i % 2 ? 9 : -9} ${x} 2)`}
-        />
-      ))}
-      <line x1="0" y1="2" x2={W} y2="2" stroke="var(--gold-deep)" strokeWidth="1.2" />
-
-      {swags.map((p, i) => (
-        <Marigold key={i} x={p.x} y={p.y} color={p.c} />
-      ))}
-
-      {/* hanging strands at the inner joins and the centre of each swag */}
-      {[133, 267, 66, 200, 334].map((x, i) => {
-        const len = i < 2 ? 5 : 3
-        const top = i < 2 ? 8 : 6 + SAG
-        return (
-          <g key={x} className="toran-strand" style={{ transformOrigin: `${x}px ${top}px`, animationDelay: `${i * -1.3}s` }}>
-            {Array.from({ length: len }, (_, k) => (
-              <Marigold key={k} x={x} y={top + 6 + k * 9.5} r={4.8} color={MARIGOLD[(k + i) % 3]} />
-            ))}
-            <path
-              d={`M${x - 4} ${top + 6 + len * 9.5} L${x + 4} ${top + 6 + len * 9.5} L${x} ${top + 16 + len * 9.5} Z`}
-              fill="var(--gold)"
-            />
-          </g>
-        )
-      })}
-    </svg>
-  )
-}
+import { motion } from 'framer-motion'
+import { EASE, inView } from '../animations'
 
 /* Rose and marigold petals drifting down over the invitation column. */
 const PETALS = [
@@ -181,4 +98,143 @@ export function Sparkles({ items }) {
       ))}
     </div>
   )
+}
+
+/* Rich paper ground: a faint gold damask lattice over fine linen weave, with
+   a warm vignette. Sits behind a section's content — the section needs
+   `isolation: isolate` so the negative z-index stays inside it. */
+export function Texture() {
+  return <div aria-hidden="true" className="texture" />
+}
+
+/* Gold filigree divider: scrolling vines either side of a lotus. The vines
+   draw themselves outward from the centre, then the lotus blooms. */
+const VINE = [
+  'M88 15 C78 15 74 6 63 6 C52 6 50 17 39 17 C29 17 27 10 18 10 C12 10 8 14 3 14',
+  'M63 6 C60 12 66 16 69 11',
+  'M39 17 C42 11 35 7 33 12',
+  'M18 10 C19 6 23 5 25 7',
+]
+
+export function Filigree({ width = 200, color = 'var(--gold)', delay = 0 }) {
+  const draw = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: (i) => ({
+      pathLength: 1,
+      opacity: 1,
+      transition: { duration: 1.4, ease: EASE, delay: delay + 0.15 * i },
+    }),
+  }
+  const vines = (flip) => (
+    <g transform={flip ? 'translate(200 0) scale(-1 1)' : undefined}>
+      {VINE.map((d, i) => (
+        <motion.path key={i} d={d} custom={i} variants={draw} stroke={color} strokeWidth="1" strokeLinecap="round" fill="none" />
+      ))}
+      <motion.circle cx="3" cy="14" r="1.6" fill={color} variants={draw} custom={4} />
+    </g>
+  )
+  return (
+    <motion.svg
+      width={width}
+      height={(width * 26) / 200}
+      viewBox="0 0 200 26"
+      aria-hidden="true"
+      initial="hidden"
+      whileInView="visible"
+      viewport={inView}
+      style={{ display: 'block', margin: '0 auto', overflow: 'visible' }}
+    >
+      {vines(false)}
+      {vines(true)}
+      <motion.g
+        variants={{
+          hidden: { scale: 0, opacity: 0 },
+          visible: { scale: 1, opacity: 1, transition: { duration: 0.8, ease: EASE, delay: delay + 0.5 } },
+        }}
+        style={{ originX: 0.5, originY: 1 }}
+        fill={color}
+      >
+        <path d="M100 2 C104.5 8 104.5 15 100 21 C95.5 15 95.5 8 100 2 Z" />
+        <path d="M100 21 C93 19 88.5 13.5 87.5 8 C94 9.5 98 14.5 100 21 Z" opacity="0.75" />
+        <path d="M100 21 C107 19 111.5 13.5 112.5 8 C106 9.5 102 14.5 100 21 Z" opacity="0.75" />
+        <path d="M89 23 L111 23" stroke={color} strokeWidth="1" strokeLinecap="round" />
+      </motion.g>
+    </motion.svg>
+  )
+}
+
+/* A brass temple bell on a short chain, swinging gently. */
+export function Bell({ chain = 40, delay = 0, style = {} }) {
+  return (
+    <svg
+      className="bell-swing"
+      width="24"
+      height={chain + 34}
+      viewBox={`0 0 24 ${chain + 34}`}
+      aria-hidden="true"
+      style={{ animationDelay: `${delay}s`, overflow: 'visible', ...style }}
+    >
+      <defs>
+        <linearGradient id="bell-brass" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#8b6210" />
+          <stop offset="0.45" stopColor="#f2ddab" />
+          <stop offset="1" stopColor="#a8761c" />
+        </linearGradient>
+      </defs>
+      <line x1="12" y1="0" x2="12" y2={chain} stroke="var(--gold-deep)" strokeWidth="1.2" strokeDasharray="2.5 1.5" />
+      <g transform={`translate(0 ${chain})`}>
+        <circle cx="12" cy="2" r="2.2" fill="none" stroke="var(--gold-deep)" strokeWidth="1.2" />
+        <path d="M12 4 C6 4 4 10 4 18 L1.5 23 L22.5 23 L20 18 C20 10 18 4 12 4 Z" fill="url(#bell-brass)" />
+        <path d="M2 23 L22 23" stroke="#8b6210" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M6 14 L18 14" stroke="#8b6210" strokeWidth="0.7" opacity="0.6" />
+        <circle className="bell-clapper" cx="12" cy="27" r="2.4" fill="#a8761c" />
+      </g>
+    </svg>
+  )
+}
+
+/* Gold flourishes in the four corners of a photograph, drawn in on scroll. */
+export function PhotoCorners({ color = '#fdf3dc', size = 38, inset = 10 }) {
+  const corners = [
+    { top: inset, left: inset, t: 'none' },
+    { top: inset, right: inset, t: 'scaleX(-1)' },
+    { bottom: inset, left: inset, t: 'scaleY(-1)' },
+    { bottom: inset, right: inset, t: 'scale(-1, -1)' },
+  ]
+  return corners.map(({ t, ...pos }, i) => (
+    <motion.svg
+      key={i}
+      width={size}
+      height={size}
+      viewBox="0 0 40 40"
+      aria-hidden="true"
+      initial="hidden"
+      whileInView="visible"
+      viewport={inView}
+      style={{
+        position: 'absolute',
+        ...pos,
+        transform: t,
+        zIndex: 2,
+        pointerEvents: 'none',
+        filter: 'drop-shadow(0 1px 2px rgba(43,8,18,0.45))',
+      }}
+    >
+      {['M2 38 L2 10 C2 5 5 2 10 2 L38 2', 'M8 30 C8 16 16 8 30 8', 'M10 2 C10 8 14 10 18 8'].map((d, k) => (
+        <motion.path
+          key={k}
+          d={d}
+          fill="none"
+          stroke={color}
+          strokeWidth={k ? 1 : 1.4}
+          strokeLinecap="round"
+          variants={{
+            hidden: { pathLength: 0, opacity: 0 },
+            visible: { pathLength: 1, opacity: 0.95, transition: { duration: 1.2, ease: EASE, delay: 0.3 + k * 0.2 } },
+          }}
+        />
+      ))}
+      <circle cx="30" cy="8" r="1.6" fill={color} />
+    </motion.svg>
+  ))
 }

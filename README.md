@@ -20,25 +20,23 @@ Clear `couple.hashtag` and that line simply doesn't render.
 
 ## 2. Background music
 
-The player is built and switched on, but **there is no track yet.** Drop one in:
+`public/music.mp3` is **"Indian Love Music - Loop" by Sonican** (flute, sitar,
+tabla and soft humming, no lyrics, 1:56, made to loop) from
+https://pixabay.com/music/world-indian-love-music-loop-457988/ — free to use
+under the Pixabay Content License, no attribution required.
 
-```bash
-cp ~/Downloads/your-song.mp3 public/music.mp3
-```
+Behaviour:
 
-Then reload. Behaviour:
+- Music starts **when the guest taps the envelope open** and fades in over
+  about four seconds. Browsers block autoplay until a real tap; a guest who
+  already opened the envelope this session hears it from their first tap.
+- A play/pause button sits top-right once the track has loaded. With no
+  `public/music.mp3` the button stays hidden and nothing breaks.
+- Volume is 28%, set by `music.volume` in `src/data/wedding.js` (iPhones
+  ignore page volume and play at the device volume).
 
-- Music starts **when the guest taps the envelope open** — never before.
-  Browsers block autoplay until a real tap, so that gesture is the only moment
-  it can legally begin.
-- A mute button appears top-right, and it only appears if the track actually
-  loaded. **With no `public/music.mp3` the button stays hidden and nothing
-  breaks** — the invite just runs silent.
-- Volume is 28%, set by `music.volume` in `src/data/wedding.js`.
-
-Use a track you have the rights to. Free options: the YouTube Audio Library,
-Pixabay Music, or Free Music Archive. A soft instrumental — piano, sitar,
-strings — suits this better than anything with vocals.
+To swap the track, replace `public/music.mp3` with any MP3 you have the
+rights to. A soft instrumental suits this better than anything with vocals.
 
 ## 3. Deployed
 
@@ -59,22 +57,32 @@ if the domain ever changes.
 
 ## 4. Photos
 
-Nine photos, chosen from the 1,680-image FotoOwl gallery (the couple sessions
-sit at positions 1200-1385 and 1557-1679). Each is resized from a ~12 MB
-4672x7008 original down to ~1000px wide, ~200 KB. All nine together are about
-1.6 MB, which matters because most guests will open this on mobile data.
+Fourteen photos, all from the Mohey Rang Films shoot: the first set chosen
+from the 1,680-image FotoOwl gallery, the rest taken from the couple's
+earlier Netlify invitation. Each is resized to ~1000px wide, 80-250 KB, which
+matters because most guests will open this on mobile data.
 
-| File in `public/img/` | Gallery position | Where it appears |
-|---|---|---|
-| `hero.jpg` | 1266 | opening screen |
-| `countdown.jpg` | 1635 | countdown background |
-| `wedding.jpg` | 1324 | The Wedding |
-| `reception.jpg` | 1591 | The Reception |
-| `gallery-lead.jpg` | 1353 | photo strip - "Together" |
-| `gallery-bride.jpg` | 917 | photo strip - "The Bride" |
-| `gallery-groom.jpg` | 815 | photo strip - "The Groom" |
-| `gallery-hands.jpg` | 1620 | photo strip - "The Details" (wide band) |
-| `closing.jpg` | 1662 | closing screen |
+**Every photo appears exactly once.** Several frames in the shoot are
+near-duplicates (same arch, same chandelier hall), so before swapping one in,
+check the rest of the page doesn't already show that spot or pose.
+
+| File in `public/img/` | Where it appears |
+|---|---|
+| `hero.jpg` | opening screen - both under the arch, full-length |
+| `countdown.jpg` | countdown background - chandelier hall |
+| `wedding.jpg` | The Wedding - the groom tucking her hair back |
+| `reception.jpg` | The Reception - in the hall, by the rail (client's pick) |
+| `gallery-gesture.jpg` | photo strip - "Little Gestures" (lead) |
+| `gallery-bride.jpg` | photo strip - "The Bride" |
+| `gallery-groom.jpg` | photo strip - "The Groom" |
+| `gallery-rings.jpg` | photo strip - "The Rings" |
+| `gallery-mehendi.jpg` | photo strip - "The Details" |
+| `gallery-lawn.jpg` | photo strip - "Hand in Hand" |
+| `gallery-flower.jpg` | photo strip - "In Bloom" |
+| `gallery-lead.jpg` | photo strip - "Together, Always" (full-width closer) |
+| `closing.jpg` | closing screen - overhead staircase |
+
+`gallery-hands.jpg` is kept but unused (a wide-band alternative to the rings).
 
 ### The rule: crop in the file, never in CSS
 
@@ -122,9 +130,7 @@ entirely.
 ### The gallery frames crop nothing
 
 Portrait gallery frames are `2 / 3` and the wide band is `3 / 2`, matching the
-files, so `cover` has nothing to trim there either. `gallery-lead.jpg` is a
-full uncropped frame on purpose - it is a wide garden scene where the couple
-are deliberately small, and cropping in would lose the composition.
+files, so `cover` has nothing to trim there either.
 
 ### Swapping a photo
 

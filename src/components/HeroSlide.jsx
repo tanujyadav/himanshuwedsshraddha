@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import Photo from './Photo'
 import Ornament from './Ornament'
 import { Mandala, CornerBrackets, AndRule } from './Motifs'
-import { Toran } from './Festive'
+import { Texture, Filigree } from './Festive'
 import { EASE, blurIn } from '../animations'
 import { couple, weddingDate, invitation } from '../data/wedding'
 
@@ -33,43 +33,53 @@ export default function HeroSlide() {
         background:
           'radial-gradient(120% 65% at 50% 8%, #fffdf8 0%, var(--cream) 42%, var(--cream-warm) 100%)',
         paddingBottom: 30,
+        isolation: 'isolate',
       }}
     >
-      {/* Bottom brackets only — the toran takes the top edge. */}
-      <CornerBrackets sides="bottom" />
-
-      {/* Marigold toran strung across the doorway, the way a venue entrance
-          is dressed. Absolute so it overlaps the arch's dome slightly. */}
-      <motion.div
-        initial={{ opacity: 0, y: -24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
-        style={{ position: 'absolute', top: 0, left: -6, right: -6, zIndex: 4, pointerEvents: 'none' }}
-      >
-        <Toran height={86} />
-      </motion.div>
+      <Texture />
+      <CornerBrackets />
 
       {/* ---- Ganesha, then the arched photograph ----
           The same illustrated image used on the envelope front
-          (public/img/ganesha.png), small, in place of the abstract diamond
-          crest this spot used to hold. */}
-      <div style={{ padding: '62px var(--page-padding-x) 0', position: 'relative', zIndex: 2 }}>
+          (public/img/ganesha.png), set large at the very top of the card as
+          the opening blessing, with a soft golden glow breathing behind it. */}
+      <div style={{ padding: '18px var(--page-padding-x) 0', position: 'relative', zIndex: 2 }}>
         <motion.div
           initial={{ opacity: 0, y: -10, scale: 0.7 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
-          style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}
+          transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}
+          style={{
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: 14,
+          }}
         >
+          <span aria-hidden="true" className="halo-glow" />
           <img
             src="/img/ganesha.png"
             alt=""
             style={{
-              width: 40,
-              height: 40,
+              position: 'relative',
+              width: 78,
+              height: 78,
               objectFit: 'contain',
-              filter: 'drop-shadow(0 1px 2px rgba(74,15,32,0.25))',
+              filter: 'drop-shadow(0 2px 4px rgba(74,15,32,0.28))',
             }}
           />
+          <div
+            className="devanagari"
+            style={{
+              position: 'relative',
+              fontSize: 11.5,
+              fontWeight: 500,
+              color: 'var(--gold-deep)',
+              marginTop: 4,
+            }}
+          >
+            ॥ श्री गणेशाय नमः ॥
+          </div>
         </motion.div>
 
         {/* Flex row so the arch can size from its height: on a short phone the
@@ -102,11 +112,12 @@ export default function HeroSlide() {
           style={{
             position: 'relative',
             aspectRatio: '25 / 32',
-            height: 'min(46svh, 440px)',
+            height: 'min(44svh, 420px)',
             maxWidth: '100%',
             // Dome top, barely-rounded base — the mandap arch.
             borderRadius: '48% 48% 6px 6px / 31% 31% 1% 1%',
             overflow: 'hidden',
+            background: 'var(--cream-warm)',
             border: '1px solid rgba(201,148,42,0.55)',
             // Double rule: cream gap, then a second finer gold line outside it.
             boxShadow:
@@ -144,7 +155,7 @@ export default function HeroSlide() {
           </motion.div>
 
           <div style={{ margin: '13px 0 10px' }}>
-            <Ornament width={104} delay={0.5} />
+            <Filigree width={170} delay={0.4} />
           </div>
 
           <motion.div
