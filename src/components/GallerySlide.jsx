@@ -115,7 +115,7 @@ export default function GallerySlide() {
   )
 }
 
-/* A tilted polaroid held on with a strip of gold washi tape. The whole print
+/* A tilted polaroid pinned to the board with a push pin. The whole print
    rotates, so the photo inside is never cropped by the tilt. A tap or hover
    straightens it. */
 function Frame({ item, ratio, tilt = 0, small = false }) {
@@ -134,22 +134,7 @@ function Frame({ item, ratio, tilt = 0, small = false }) {
         boxShadow: '0 14px 30px rgba(74,15,32,0.18), 0 2px 6px rgba(74,15,32,0.1)',
       }}
     >
-      <span
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          top: -9,
-          left: '50%',
-          width: small ? 52 : 78,
-          height: 20,
-          marginLeft: small ? -26 : -39,
-          transform: `rotate(${-tilt * 1.8}deg)`,
-          background:
-            'repeating-linear-gradient(45deg, rgba(242,221,171,0.85) 0 6px, rgba(201,148,42,0.55) 6px 8px)',
-          boxShadow: '0 1px 3px rgba(74,15,32,0.15)',
-          zIndex: 2,
-        }}
-      />
+      <Pin size={small ? 14 : 18} />
       <div style={{ position: 'relative', aspectRatio: ratio, overflow: 'hidden' }}>
         <Photo
           name={item.src}
@@ -171,5 +156,34 @@ function Frame({ item, ratio, tilt = 0, small = false }) {
         </figcaption>
       </Reveal>
     </motion.figure>
+  )
+}
+
+/* A glossy maroon push pin with a gold rim, pressed into the top border of
+   a print. It drops in and settles as the print scrolls into view, and casts
+   a small shadow down-right onto the paper. */
+function Pin({ size }) {
+  return (
+    <motion.span
+      aria-hidden="true"
+      initial={{ scale: 1.8, y: -10, opacity: 0 }}
+      whileInView={{ scale: 1, y: 0, opacity: 1 }}
+      viewport={inView}
+      transition={{ type: 'spring', stiffness: 420, damping: 16, delay: 0.35 }}
+      style={{
+        position: 'absolute',
+        top: -size * 0.35,
+        left: '50%',
+        width: size,
+        height: size,
+        marginLeft: -size / 2,
+        borderRadius: '50%',
+        zIndex: 2,
+        background:
+          'radial-gradient(circle at 35% 30%, #ffd9e2 0%, #c23a5e 22%, #7a1534 62%, #3d0a1a 100%)',
+        boxShadow:
+          '0 0 0 1.5px #d4a64a, 0 0 0 2.5px rgba(139,98,16,0.5), 3px 5px 5px rgba(43,8,18,0.35)',
+      }}
+    />
   )
 }

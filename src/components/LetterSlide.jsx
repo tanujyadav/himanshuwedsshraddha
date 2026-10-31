@@ -35,8 +35,8 @@ export default function LetterSlide() {
 
       {/* ---- The sheet ---- */}
       <motion.div
-        initial={{ opacity: 0, y: 40, rotate: -2.5 }}
-        whileInView={{ opacity: 1, y: 0, rotate: -0.8 }}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={inView}
         transition={{ duration: 1.2, ease: EASE }}
         className="parchment"
