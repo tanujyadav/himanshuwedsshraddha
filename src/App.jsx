@@ -44,7 +44,12 @@ export default function App() {
      than cutting in. Browsers block autoplay until a real gesture: a guest
      returning this session skips the envelope, so for them play() is refused
      and the music instead starts on their first tap anywhere. If
-     public/music.mp3 is missing, the control simply never appears. */
+     public/music.mp3 is missing, the control simply never appears.
+
+     Phones keep page audio playing in the background — after switching apps,
+     locking the screen, or closing WhatsApp's in-app browser — so the music
+     pauses whenever the page is hidden or unloaded, and picks up again when
+     the guest comes back (unless they paused it themselves). */
   useEffect(() => {
     if (!opened || !music.enabled || audioRef.current) return
 
@@ -55,35 +60,56 @@ export default function App() {
     audioRef.current = audio
     let fade = null
 
-    const start = () =>
+    const start = () => {
+      if (document.hidden) return
       audio.play().then(
         () => {
-          setPlaying(true)
           clearInterval(fade)
           fade = setInterval(() => {
             audio.volume = Math.min(target, audio.volume + target / 40)
             if (audio.volume >= target) clearInterval(fade)
           }, 100)
         },
-        () => setPlaying(false)
+        () => {}
       )
+    }
     const retry = () => {
       if (audio.paused && !userPaused.current) start()
     }
+    const stop = () => {
+      clearInterval(fade)
+      audio.pause()
+    }
+    const onVisibility = () => {
+      if (document.hidden) stop()
+      else retry()
+    }
+    // The button follows what the audio is really doing, whoever caused it.
+    const onPlay = () => setPlaying(true)
+    const onPause = () => setPlaying(false)
     const onReady = () => setAudioReady(true)
     const onError = () => setAudioReady(false)
 
+    audio.addEventListener('play', onPlay)
+    audio.addEventListener('pause', onPause)
     audio.addEventListener('loadedmetadata', onReady)
     audio.addEventListener('error', onError)
+    document.addEventListener('visibilitychange', onVisibility)
+    window.addEventListener('pagehide', stop)
     window.addEventListener('pointerdown', retry, { once: true })
     start()
 
     return () => {
-      clearInterval(fade)
+      stop()
+      audio.removeEventListener('play', onPlay)
+      audio.removeEventListener('pause', onPause)
       audio.removeEventListener('loadedmetadata', onReady)
       audio.removeEventListener('error', onError)
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('pagehide', stop)
       window.removeEventListener('pointerdown', retry)
-      audio.pause()
+      audio.removeAttribute('src')
+      audio.load()
       // Cleared so React's dev-mode remount re-creates and restarts it.
       audioRef.current = null
     }
@@ -95,11 +121,10 @@ export default function App() {
     if (audio.paused) {
       userPaused.current = false
       audio.volume = music.volume ?? 0.3
-      audio.play().then(() => setPlaying(true), () => {})
+      audio.play().catch(() => {})
     } else {
       userPaused.current = true
       audio.pause()
-      setPlaying(false)
     }
   }, [])
 
